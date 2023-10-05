@@ -9,8 +9,8 @@
  */
 int main(int ac, char **av, char **env)
 {
-	char *line = NULL, *buff, *argv[2];
-	int status, loopcnt = 0, term = isatty(0);
+	char *line = NULL, *buff, *argv[31];
+	int status, n, loopcnt = 0, term = isatty(0);
 	struct stat st;
 	size_t i = 0;
 	ssize_t read_status;
@@ -27,8 +27,12 @@ int main(int ac, char **av, char **env)
 		buff = strtok(line, " \n");
 		if (stat(buff, &st) == 0)
 		{
-			argv[0] = buff;
-			argv[1] = NULL;
+			argv[0] = buff, n = 1;
+			while (buff)
+			{
+				buff = strtok(NULL, " \n");
+				argv[n++] = buff;
+			}
 			child = fork();
 			if (child == 0)
 			{
