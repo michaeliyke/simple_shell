@@ -25,31 +25,34 @@ int main(int ac, char **av, char **env)
 		if ((read_status = getline(&line, &i, stdin)) == -1)
 			break;
 		buff = strtok(line, " \n");
-		if (stat(buff, &st) == 0)
+		if (buff)
 		{
-			argv[0] = buff, n = 1;
-			while (buff)
+			if (stat(buff, &st) == 0)
 			{
-				buff = strtok(NULL, " \n");
-				argv[n++] = buff;
-			}
-			child = fork();
-			if (child == 0)
-			{
-				if (execve(argv[0], argv, env) == -1)
+				argv[0] = buff, n = 1;
+				while (buff)
 				{
-					perror("Execution failed");
-					_exit(EXIT_FAILURE);
+					buff = strtok(NULL, " \n");
+					argv[n++] = buff;
+				}
+				child = fork();
+				if (child == 0)
+				{
+					if (execve(argv[0], argv, env) == -1)
+					{
+						perror("Execution failed");
+						_exit(EXIT_FAILURE);
+					}
+				}
+				else
+				{
+					wait(&status);
 				}
 			}
 			else
 			{
-				wait(&status);
+				dprintf(2, "%s: %d: %s: not found\n", av[0], loopcnt, buff);
 			}
-		}
-		else
-		{
-			dprintf(2, "%s: %d: %s: not found\n", av[0], loopcnt, buff);
 		}
 	}
 	return (0);
