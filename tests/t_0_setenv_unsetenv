@@ -1,0 +1,20 @@
+#!/bin/bash
+clear
+
+# The code below will compile only what is needed for this test
+gcc -Werror -Wall -Wextra -pedantic -o a.out ../util-1.c $(basename $0).c
+
+# The code below will execute a.out only if compilation succeeded
+# If compilation failed, it compplains instead and exits
+exit_status=$(echo $?)
+echo
+if (( $exit_status != 0 )); then
+	echo "Compiling failed!"
+	echo
+	exit 0
+fi
+
+echo "Build successful!"
+echo
+./a.out
+exit 0
