@@ -1,10 +1,11 @@
-TEST_SUITE
-*.bash
+# TEST_SUITE
+# *.bash
 a.c
 b.c
 c.c
 hsh
 allowed_functions
+test/*.out
 
 
 
