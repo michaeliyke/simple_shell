@@ -12,12 +12,12 @@ int main(int ac, char **av, char **env)
 	char *line = NULL, *buff, *argv[31];
 	int status, n, loopcnt = 0, term = isatty(0);
 	struct stat st;
-	size_t i = 0;
+	size_t i = 0; /* TODO: i variable to be renamed descriptively */
 	ssize_t read_status;
 	pid_t child;
 	(void)ac;
 
-	while(1)
+	while (1)
 	{
 		loopcnt++;
 		if (term == 1)
