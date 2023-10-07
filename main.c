@@ -9,8 +9,8 @@
  */
 int main(int ac, char **av, char **env)
 {
-	char *line = NULL, *buff, *argv[31];
-	int status, n, loopcnt = 0, term = isatty(0);
+	char *line = NULL, *buff, *argv[31], *buff1;
+	int status, n, loopcnt = 0, term = isatty(0), exit_s;
 	size_t i = 0; /* TODO: i variable to be renamed descriptively */
 	ssize_t read_status;
 	pid_t child;
@@ -26,9 +26,10 @@ int main(int ac, char **av, char **env)
 		buff = strtok(line, " \n");
 		if (buff)
 		{
-			if (exists(buff, &buff)) /* expands buff to its full path */
+			exit_s = exists(buff, &buff1);
+			if (exit_s) /* expands buff to its full path */
 			{
-				argv[0] = buff, n = 1;
+				argv[0] = buff1, n = 1;
 				while (buff)
 				{
 					buff = strtok(NULL, " \n");
@@ -54,5 +55,7 @@ int main(int ac, char **av, char **env)
 			}
 		}
 	}
+	if (exit_s == 0)
+		exit(127);
 	return (0);
 }
