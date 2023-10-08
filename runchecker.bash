@@ -12,7 +12,11 @@ target_directory="$1"
 numlen=${#1}
 
 while read -r command; do
+# echo: ./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/bin_ls.bash
+# awk: ./TEST_SUITE/3.Simple_shell_0.3/bin_ls.bash
+# cut: 3.Simple_shell_0.3
 	directory=$(echo "$command" | awk '{print $NF}' | cut -d'/' -f3)
+
 
 	if [ $numlen -gt 0 ];
 	then
@@ -25,14 +29,14 @@ while read -r command; do
 
 	echo -e "${ORANGE}${command}${NC}"
 	output=$(eval "$command")
-    
+
 	if [[ $output == "OK" ]]; then
 		echo -e "${GREEN}${output}${NC}"
 		((ok_count++))
 	else
 		echo "$output"
 	fi
-    
+
 	echo
 	((total_commands++))
 done < "TEST_SUITE/command_list.txt"
