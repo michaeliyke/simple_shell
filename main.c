@@ -16,6 +16,7 @@ int main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)av;
+	(void)exit_s;
 	setenv("TERM", "xterm-256color", 1);
 
 	while (1)
@@ -28,8 +29,8 @@ int main(int ac, char **av, char **env)
 		buff = _strtok(strdup(line), " \n");
 		if (buff) /* if (buff), exec the cmd and return status code */
 			exit_s = executor(buff, get_toks(line), env, loopcnt);
-	}
-	if (exit_s == 0)
-		exit(127);
+	} /*
+	 if (exit_s == 0)
+		 exit(127); */
 	return (0);
 }
