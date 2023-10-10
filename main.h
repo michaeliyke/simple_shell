@@ -40,6 +40,6 @@ int exit_fn(char **args);
 int ls_fn(char **args);
 char **get_toks(char *s);
 char *extern_handler(char *command_name);
-int executor(char *command_name, char **argv, char **env, int loopcnt);
+int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt);
 
 #endif

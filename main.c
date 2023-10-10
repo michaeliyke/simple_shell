@@ -28,7 +28,8 @@ int main(int ac, char **av, char **env)
 			break;
 		buff = _strtok(strdup(line), " \n");
 		if (buff) /* if (buff), exec the cmd and return status code */
-			exit_s = executor(buff, get_toks(line), env, loopcnt);
+			exit_s = executor(
+			    buff, av, get_toks(line), env, loopcnt);
 	} /*
 	 if (exit_s == 0)
 		 exit(127); */

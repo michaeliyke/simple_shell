@@ -7,23 +7,30 @@
  *
  * Return: void
  */
-int executor(char *command_name, char **argv, char **env, int loopcnt)
+int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt)
 {
 	/* Handle builtin calls */
-	builtInHandler fn = builtin_handler(command_name);
+	builtInHandler fn = builtin_handler(cmd_name);
 	pid_t child;
 	int status;
 
 	if (fn)
 	{
 		/* it is a built in */
-		printf("Builtin %s FOUND!\n", command_name);
+		printf("Builtin %s FOUND!\n", cmd_name);
 		return (0);
 	}
 
 	/* Handle external commands */
-	argv[0] = extern_handler(command_name);
-	if (argv[0] != NULL)
+	argv[0] = extern_handler(cmd_name);
+	if (argv[0] == NULL)
+	{
+
+		dprintf(
+		    2, "%s: %d: %s: not found\n", av[0], loopcnt, cmd_name);
+		exit(127);
+	}
+	else
 	{
 		/* Handle external command here */
 		child = fork();
@@ -37,8 +44,6 @@ int executor(char *command_name, char **argv, char **env, int loopcnt)
 			wait(&status);
 		return (0);
 	}
-	dprintf(
-	    2, "%s: %d: %s: not found\n", argv[0], loopcnt, command_name);
 	return (0);
 }
 
