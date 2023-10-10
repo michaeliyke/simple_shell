@@ -21,6 +21,7 @@ typedef struct
 
 #define NUM_BUILTINS 3
 
+ssize_t get_line(char **lineptr, size_t *n, FILE *stream);
 int _setenv(const char *name, const char *value, int overwrite);
 int _unsetenv(const char *name);
 int exists(char *token, char **abs_ptr);

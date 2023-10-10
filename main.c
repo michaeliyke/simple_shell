@@ -24,7 +24,7 @@ int main(int ac, char **av, char **env)
 		loopcnt++;
 		if (term == 1)
 			printf("$ ");
-		if ((read_status = getline(&line, &i, stdin)) == -1)
+		if ((read_status = get_line(&line, &i, stdin)) == -1)
 			break;
 		buff = _strtok(strdup(line), " \n");
 		if (buff) /* if (buff), exec the cmd and return status code */
