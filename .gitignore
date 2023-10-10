@@ -1,0 +1,95 @@
+# TEST_SUITE
+# *.bash
+a.c
+b.c
+c.c
+hsh
+allowed_functions
+test/*.out
+d
+
+
+
+# Ignore compiled object files and executables
+*.o
+*.out
+*.exe
+
+# Ignore compiled dynamic libraries (shared libraries)
+*.so
+
+# Ignore generated files
+*.swp
+*.swo
+*.swn
+*.log
+*.tmp
+
+# Ignore build directories and files
+/build/
+/bin/
+/Debug/
+/Release/
+*.dSYM/
+
+# Ignore editor/IDE specific files and settings
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Ignore system and backup files
+.DS_Store
+Thumbs.db
+
+# Ignore user-specific files
+*.user
+*.suo
+*.userprefs
+
+# Ignore dependency files
+dependencies/
+CMakeLists.txt.user
+
+# Ignore compiled Makefiles
+Makefile
+
+# Ignore CMake files
+CMakeFiles/
+CMakeCache.txt
+CMakeScripts/
+CMakeDoxyfile.in
+
+# Ignore documentation
+/doc/
+/doc-Doxyfile
+
+# Ignore auto-generated files
+autom4te.cache/
+configure
+Makefile.in
+config.log
+config.status
+aclocal.m4
+config.h
+config.h.in
+
+# Ignore generated build files
+cmake_install.cmake
+install_manifest.txt
+CMakeDoxygenDefaults.cmake
+CMakeDoxygenDefaults.cmake.in
+CMakeDoxyfile.in
+CMakeExportBuildSettings.cmake
+
+# Ignore code coverage reports
+coverage/
+*.gcno
+*.gcda
+
+# Ignore test result files
+test-results/
+
+# Ignore package manager directories
+vendor/
+node_modules/

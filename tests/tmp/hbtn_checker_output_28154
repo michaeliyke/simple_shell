@@ -1,0 +1,11 @@
+AUTHORS
+README.md
+TEST_SUITE
+allowed_functions
+hsh
+main.c
+main.h
+runchecker.bash
+tests
+util-1.c
+util-2.c

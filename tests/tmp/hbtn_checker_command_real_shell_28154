@@ -1,0 +1,1 @@
+/usr/bin/echo "ls"| "/usr/bin/sh" > "/tmp/hbtn_checker_expected_output_28154" 2> "/tmp/hbtn_checker_expected_error_output_28154" ; /usr/bin/echo -n $? > "/tmp/hbtn_checker_expected_status_28154"

@@ -1,0 +1,35 @@
+/TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_path_no_bin.bash
+(command)[echo "ls" | ./hsh]
+
+[GOT]:
+(stdout)[AUTHORS
+README.md
+TEST_SUITE
+allowed_functions
+hsh
+main.c
+main.h
+runchecker.bash
+tests
+util-1.c
+util-2.c
+](Length: 105)
+(stderr)[](Length: 0)
+(status)[0]
+
+[EXPECTED]:
+(stdout)[allowed_functions
+AUTHORS
+hsh
+main.c
+main.h
+README.md
+runchecker.bash
+tests
+TEST_SUITE
+util-1.c
+util-2.c
+](Length: 105)
+(stderr)[](Length: 0)
+(status)[0]
+
