@@ -11,6 +11,16 @@
 #include <dirent.h>
 extern char **environ;
 
+typedef int (*builtInHandler)(char **args);
+typedef struct
+{
+	char *name;
+	char **arguments;
+	builtInHandler handler;
+} builtin;
+
+#define NUM_BUILTINS 3
+
 int _setenv(const char *name, const char *value, int overwrite);
 int _unsetenv(const char *name);
 int exists(char *token, char **abs_ptr);
@@ -24,4 +34,12 @@ size_t count_path_entr(char *str);
 int find(char *dir_path, char *name);
 int str_contains(char c, char *str);
 #define PAPERSIZE "PAPERSIZE"
+builtInHandler builtin_handler(char *command_name);
+int env_fn(char **args);
+int exit_fn(char **args);
+int ls_fn(char **args);
+char **get_toks(char *s);
+char *extern_handler(char *command_name);
+int executor(char *command_name, char **argv, char **env, int loopcnt);
+
 #endif

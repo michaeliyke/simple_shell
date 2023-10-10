@@ -11,7 +11,7 @@ echo
 if (( $exit_status != 0 )); then
 	echo "Compiling failed!"
 	echo
-	exit 0
+	exit $exit_status
 fi
 
 echo "Build successful!"
