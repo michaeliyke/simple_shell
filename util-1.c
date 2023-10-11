@@ -93,7 +93,8 @@ char *get_abs_path(char *name)
 	{ /* Handle full and relative paths here */
 		if (*name == '.')
 			return realpath(name, NULL);
-		return name;
+		if (*name == '/')
+			return name;
 	}
 
 	/* Go through the path and search for the given  name */
@@ -103,12 +104,13 @@ char *get_abs_path(char *name)
 	for (ptr = dirs; *ptr != NULL; ptr++)
 	{ /* Allocate memory for the absolute path */
 		abs_path = malloc(
-		    sizeof(char) * (strlen(*ptr) + strlen(name) + 1));
+		    sizeof(char) * (strlen(*ptr) + strlen(name) + 2));
 		sprintf(abs_path, "%s/%s", *ptr, name);
 		if (path_exists(abs_path))
 			break;
 		free(abs_path), abs_path = NULL;
 	}
+
 	return (abs_path); /* Here abs_path is either NULL or a full path */
 }
 
@@ -123,7 +125,7 @@ int path_exists(char *abspath)
 	struct stat st;
 
 	if (stat(abspath, &st) == 0)
-		return (1);
+		return (*abspath == '.' || *abspath == '/');
 	return (0);
 }
 
@@ -167,40 +169,27 @@ char *_getenv(char *var_name)
  * first call chops off a word
  * next call must be with null
  */
-char *_strtok(char *str, char *sep)
+char *_strtok(char *str, const char *sep)
 {
-	unsigned int i;
-	static char *next;
+	static char *next = NULL;
+	char *token; /* The returned token */
 
-	if (!str)
-		str = next;
-	if (str == NULL || !*str)
+	if (str) /* will be true for first execution */
+		next = str;
+	else if (!next || *next == '\0') /* true for last execution */
 		return (NULL);
+	while (*next && strchr(sep, *next))
+		next++; /* skipp beyond sep chars */
+	if (*next == '\0')
+		return (NULL); /* return if it's the end */
 
-	/* adjust pointer past prefix sep chars*/
-
-	/* adjust str pointer by checking is *str is a sep character */
-	while (*str && str_contains(*str, sep)) /*     Michael is     just okay     */
-		str++;
-	if (*str == '\0')
-		return (NULL); /* return if str contained only sep chars */
-
-	for (i = 0; str[i] != '\0'; i++)
-	{
-		if (str_contains(str[i], sep))
-		{
-			/**
-			 * If str[ctr] is a word sep
-			 * replace it with null-terminator, this makes
-			 * str become one single null-terminated word
-			 * Then, below, we use next retore the next set of
-			 * string chars for the benefit of the next invocation
-			 */
-			str[i] = '\0';
-			break;
-		}
+	token = next; /* token startes here */
+	while (*next && !strchr(sep, *next))
+		next++; /* skip until the end or a sep char */
+	if (*next)
+	{ /* it's not the end, it's a sep char, so terminate token here */
+		*next = '\0';
+		next++; /* start the next token */
 	}
-	next = str + i + 1; /* for the next call, next word starts here */
-	return (str);
-	/* null-terminated str becomaes our desired token */
+	return (token);
 }

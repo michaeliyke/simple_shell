@@ -7,6 +7,9 @@ hsh
 allowed_functions
 test/*.out
 d
+bug
+tm
+chk
 
 
 

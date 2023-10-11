@@ -12,7 +12,8 @@ int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt)
 	/* Handle builtin calls */
 	builtInHandler fn = builtin_handler(cmd_name);
 	pid_t child;
-	int status;
+	int status = 0;
+	char *tmp;
 
 	if (fn)
 	{
@@ -22,13 +23,14 @@ int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt)
 	}
 
 	/* Handle external commands */
-	argv[0] = extern_handler(cmd_name);
-	if (argv[0] == NULL)
+	tmp = extern_handler(cmd_name);
+	argv[0] = tmp ? tmp : argv[0]; /* Don't overwrite argv[0] right away */
+	if (tmp == NULL)
 	{
 
 		dprintf(
 		    2, "%s: %d: %s: not found\n", av[0], loopcnt, cmd_name);
-		exit(127);
+		return (EXIT_NOT_FOUND);
 	}
 	else
 	{
@@ -37,14 +39,18 @@ int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt)
 		if (child == 0)
 		{
 			if (execve(argv[0], argv, env) == -1)
-				perror("Execution failed"),
-				    _exit(EXIT_FAILURE);
+			{
+				dprintf(
+				    2, "%s: %d: %s: not found\n", av[0],
+				    loopcnt, cmd_name);
+				_exit(EXIT_NOT_FOUND);
+			}
 		}
 		else
 			wait(&status);
-		return (0);
+		return (status);
 	}
-	return (0);
+	return (status);
 }
 
 /**
@@ -58,7 +64,6 @@ builtInHandler builtin_handler(char *command_name)
 	builtin builtins[] = {
 	    {"env", NULL, env_fn},
 	    {"exit", NULL, exit_fn},
-	    {"ls_", NULL, ls_fn},
 	    {NULL, NULL, NULL},
 	};
 	int i;
@@ -95,13 +100,46 @@ char **get_toks(char *s)
 	char **argv = malloc(sizeof(char *) * 31), *buff;
 	int n;
 
-	buff = strtok(s, " \n");
+	buff = _strtok(s, " \n");
 	for (n = 0; buff; n++)
 	{
 
 		argv[n] = buff;
-		buff = strtok(NULL, " \n");
+		buff = _strtok(NULL, " \n");
 	}
 	argv[n] = NULL;
 	return (argv);
+}
+
+/**
+ * free_str_arr - free an arry of strings
+ * @arr: the array to free
+ * @limit: integer limit
+ *
+ * Return: void
+ */
+void free_str_arr(char **arr, int limit)
+{
+	int i = 0;
+
+	while (i < limit)
+		free(arr[i++]);
+	free(arr);
+}
+
+/**
+ * shutdown - deterines if app should exit immediately
+ * @status_code: exit status code
+ *
+ * Return: return 1 for true and 0 for false
+ */
+int shutdown(int status_code)
+{
+	switch (status_code)
+	{
+	case EXIT_NOT_FOUND:
+		return (1);
+		break;
+	}
+	return (0);
 }

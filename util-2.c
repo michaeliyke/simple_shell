@@ -23,10 +23,12 @@ int exists(char *token, char **abs_ptr)
 			return (0);
 		}
 		/* If path is relative, get the absolute path */
-		if (*token == '.' || *token != '/')
+		if (*token == '.')
 			*abs_ptr = realpath(token, NULL);
-		else /* path is aboslute */
+		else if (*token == '/') /* path is aboslute */
 			*abs_ptr = token;
+		else
+			return (0);
 		return (1);
 	}
 	/* Case of program name */
@@ -69,7 +71,7 @@ int is_program(char *path)
 char **get_sys_paths()
 {
 	char **array, *dir, *cpy;
-	int num_dirs, i, j;
+	int num_dirs, i;
 	char *str = _getenv("PATH");
 
 	if (str == NULL)
@@ -77,30 +79,15 @@ char **get_sys_paths()
 	cpy = strdup(str); /* dupicate original string */
 	num_dirs = count_path_entr(str);
 	/* allocate memory to store x number of pointer to pointer to char */
-	array = malloc(sizeof(*array) * num_dirs);
-	if (array == NULL)
-		return (NULL);
-
+	array = malloc(sizeof(char *) * (num_dirs + 1));
 	dir = _strtok(cpy, ":");
-	if (dir == NULL)
-		return (NULL);
-	array[0] = malloc(sizeof(char) * strlen(dir));
-	if (array[0] == NULL)
-		return (NULL);
-	strcpy(array[0], dir);
-
-	for (i = 1; i < num_dirs && dir != NULL; i++)
+	for (i = 0; i < num_dirs && dir != NULL; i++)
 	{
+		array[i] = strdup(dir);
 		dir = _strtok(NULL, ":");
-		if (dir == NULL)
-			return (NULL);
-		array[i] = malloc(sizeof(char) * strlen(dir));
-		if (array[i] == NULL)
-			return (NULL);
-		strcpy(array[i], dir);
-		j = i;
 	}
-	array[j + 1] = NULL;
+	array[i] = NULL;
+	free(cpy);
 	return (array);
 }
 
@@ -162,14 +149,5 @@ int find(char *dir_path, char *name)
  */
 int str_contains(char c, char *str)
 {
-	size_t i;
-
-	if (!str)
-		return (0);
-	for (i = 0; str[i]; i++)
-	{
-		if (str[i] == c)
-			return (1);
-	}
-	return (0);
+	return (strchr(str, c) != NULL);
 }

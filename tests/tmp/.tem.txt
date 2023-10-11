@@ -1,35 +1,274 @@
-/TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_path_no_bin.bash
-(command)[echo "ls" | ./hsh]
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/bin_ls.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/bin_ls_1_arg_1.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/bin_ls_3_times.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/bin_ls_empty_path.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/bin_ls_medium_input.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/bin_ls_spaces.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/empty_path_failing_cmd.bash
+[command](echo "hbtn_cmd" | ./hsh)
 
 [GOT]:
-(stdout)[AUTHORS
-README.md
-TEST_SUITE
-allowed_functions
-hsh
-main.c
-main.h
-runchecker.bash
-tests
-util-1.c
-util-2.c
-](Length: 105)
-(stderr)[](Length: 0)
-(status)[0]
+(stdout)[](Length: 0)
+(stderr)[Execution failed: No such file or directory
+](Length: 44)
+[status](0)
 
 [EXPECTED]:
-(stdout)[allowed_functions
-AUTHORS
-hsh
-main.c
-main.h
-README.md
-runchecker.bash
-tests
-TEST_SUITE
-util-1.c
-util-2.c
-](Length: 105)
-(stderr)[](Length: 0)
-(status)[0]
+(stdout)[](Length: 0)
+(stderr)[./hsh: 1: hbtn_cmd: not found
+](Length: 30)
+[status](127)
 
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/env_ignore_bin_ls.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/env_ignore_ls.bash
+[command](echo "ls" | ./hsh)
+
+[GOT]:
+(stdout)[](Length: 0)
+(stderr)[Execution failed: No such file or directory
+](Length: 44)
+[status](0)
+
+[EXPECTED]:
+(stdout)[](Length: 0)
+(stderr)[./hsh: 1: ls: not found
+](Length: 24)
+[status](127)
+
+Environment:
+_=/usr/bin/env
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_.bash
+[command](echo "ls" | ./hsh)
+
+[GOT]:
+(stdout)[AUTHORS etc
+](Length: 171)
+(stderr)[](Length: 0)
+[status](0)
+
+[EXPECTED]:
+(stdout)[a.c etc
+](Length: 171)
+(stderr)[](Length: 0)
+[status](0)
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_1_arg.bash
+[command](echo "ls -l" | ./hsh)
+
+[GOT]:
+(stdout)[total 248
+-rw-rw-r--  1 michaeliyke michaeliyke    144 Oct  6 21:17 AUTHORS etc
+](Length: 1399)
+(stderr)[](Length: 0)
+[status](0)
+
+[EXPECTED]:
+(stdout)[total 248
+-rw-rw-r--  1 michaeliyke michaeliyke    266 Oct 10 21:30 a.c etc
+](Length: 1399)
+(stderr)[](Length: 0)
+[status](0)
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_dot_ls.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_empty_path.bash
+[command](echo "ls" | ./hsh)
+
+[GOT]:
+(stdout)[](Length: 0)
+(stderr)[Execution failed: No such file or directory
+](Length: 44)
+[status](0)
+
+[EXPECTED]:
+(stdout)[](Length: 0)
+(stderr)[./hsh: 1: ls: not found
+](Length: 24)
+[status](127)
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_in_current_dir.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_in_parent_dir.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_in_two_parent_dir.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_in_two_parent_dir_2.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_in_two_parent_dir_3.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_path_bin_first.bash
+[command](echo "ls" | ./hsh)
+
+[GOT]:
+(stdout)[AUTHORS etc
+](Length: 171)
+(stderr)[](Length: 0)
+[status](0)
+
+[EXPECTED]:
+(stdout)[a.c etc
+](Length: 171)
+(stderr)[](Length: 0)
+[status](0)
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_path_bin_last.bash
+[command](echo "ls" | ./hsh)
+
+[GOT]:
+(stdout)[AUTHORS etc
+](Length: 171)
+(stderr)[](Length: 0)
+[status](0)
+
+[EXPECTED]:
+(stdout)[a.c etc
+](Length: 171)
+(stderr)[](Length: 0)
+[status](0)
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_path_bin_middle.bash
+[command](echo "ls" | ./hsh)
+
+[GOT]:
+(stdout)[AUTHORS etc
+](Length: 171)
+(stderr)[](Length: 0)
+[status](0)
+
+[EXPECTED]:
+(stdout)[a.c etc
+](Length: 171)
+(stderr)[](Length: 0)
+[status](0)
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_path_no_bin.bash
+[command](echo "ls" | ./hsh)
+
+[GOT]:
+(stdout)[AUTHORS etc
+](Length: 171)
+(stderr)[](Length: 0)
+[status](0)
+
+[EXPECTED]:
+(stdout)[a.c etc
+](Length: 171)
+(stderr)[](Length: 0)
+[status](0)
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/ls_spaces.bash
+(command)[echo "ls
+     ls
+ls
+ ls     " | ./hsh]
+
+[GOT]:
+(stdout)[AUTHORS etc
+](Length: 684)
+(stderr)[](Length: 0)
+[status](0)
+
+[EXPECTED]:
+(stdout)[a.c etc
+](Length: 684)
+(stderr)[](Length: 0)
+[status](0)
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/mix_ls_bin_ls.bash
+(command)[echo "ls
+ls
+ls
+/bin/ls
+ls
+ls
+ls
+/bin/ls
+ls
+ls" | ./hsh]
+
+[GOT]:
+(stdout)[AUTHORS etc
+](Length: 1710)
+(stderr)[](Length: 0)
+[status](0)
+
+[EXPECTED]:
+(stdout)[a.c etc
+](Length: 1710)
+(stderr)[](Length: 0)
+[status](0)
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/mix_ls_bin_ls_spaces.bash
+(command)[echo "ls
+
+ /bin/ls
+
+     ls
+ls
+ ls     " | ./hsh]
+
+[GOT]:
+(stdout)[AUTHORS etc
+](Length: 855)
+(stderr)[](Length: 0)
+[status](0)
+
+[EXPECTED]:
+(stdout)[a.c etc
+](Length: 855)
+(stderr)[](Length: 0)
+[status](0)
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/path_current_dir_ls.bash
+OK
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/path_path1_var.bash
+[command](echo "hbtn_ls" | ./hsh)
+
+[GOT]:
+(stdout)[AUTHORS etc
+](Length: 179)
+(stderr)[](Length: 0)
+[status](0)
+
+[EXPECTED]:
+(stdout)[](Length: 0)
+(stderr)[./hsh: 1: hbtn_ls: not found
+](Length: 29)
+[status](127)
+
+./TEST_SUITE/checker.bash ./hsh ./TEST_SUITE/3.Simple_shell_0.3/unknown_command_no_fork.bash
+[command](echo "hbtn" | ./hsh)
+
+[GOT]:
+(stdout)[](Length: 0)
+(stderr)[Execution failed: No such file or directory
+](Length: 44)
+[status](0)
+
+[EXPECTED]:
+(stdout)[](Length: 0)
+(stderr)[./hsh: 1: hbtn: not found
+](Length: 26)
+[status](127)
