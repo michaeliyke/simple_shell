@@ -21,7 +21,7 @@ int main(int ac, char **av, char **env)
 		loopcnt++;
 		if (term == 1)
 			printf("$ ");
-		if ((read_status = getline(&line, &i, stdin)) == -1)
+		if ((read_status = get_line(&line, &i, stdin)) == -1)
 			break;
 		tmp = strdup(line);
 		buff = _strtok(tmp, " \n");
