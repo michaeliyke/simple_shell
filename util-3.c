@@ -18,8 +18,7 @@ int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt)
 	if (fn)
 	{
 		/* it is a built in */
-		printf("Builtin %s FOUND!\n", cmd_name);
-		return (0);
+		return (fn(argv));
 	}
 
 	/* Handle external commands */
@@ -128,17 +127,20 @@ void free_str_arr(char **arr, int limit)
 }
 
 /**
- * shutdown - deterines if app should exit immediately
+ * exit_or_cont - The program will exit here using exit code
  * @status_code: exit status code
  *
  * Return: return 1 for true and 0 for false
  */
-int shutdown(int status_code)
+int exit_or_cont(int status_code)
 {
 	switch (status_code)
 	{
 	case EXIT_NOT_FOUND:
-		return (1);
+		exit(EXIT_NOT_FOUND);
+		break;
+	case EXIT_IMMEDIATE:
+		exit(0);
 		break;
 	}
 	return (0);

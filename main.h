@@ -21,6 +21,7 @@ typedef struct
 
 #define NUM_BUILTINS 2
 #define EXIT_NOT_FOUND 127
+#define EXIT_IMMEDIATE 7
 
 ssize_t get_line(char **lineptr, size_t *n, FILE *stream);
 int _setenv(const char *name, const char *value, int overwrite);
@@ -44,6 +45,6 @@ char **get_toks(char *s);
 char *extern_handler(char *command_name);
 int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt);
 void free_str_arr(char **arr, int limit);
-int shutdown(int status_code);
+int exit_or_cont(int status_code);
 
 #endif

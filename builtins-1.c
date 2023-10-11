@@ -8,7 +8,12 @@
  */
 int env_fn(char **args)
 {
+	size_t i;
+
 	(void)args;
+
+	for (i = 0; environ[i]; i++)
+		printf("%s\n", environ[i]);
 	return (0);
 }
 
@@ -21,17 +26,5 @@ int env_fn(char **args)
 int exit_fn(char **args)
 {
 	(void)args;
-	return (0);
-}
-
-/**
- * ls - exits the program
- * @args: array of argument tokens
- *
- * Return: exit status
- */
-int ls_fn(char **args)
-{
-	(void)args;
-	return (0);
+	return (EXIT_IMMEDIATE);
 }

@@ -28,8 +28,7 @@ int main(int ac, char **av, char **env)
 		if (buff) /* if (buff), exec the cmd and return status code */
 			exit_s = executor(
 			    buff, av, get_toks(line), env, loopcnt);
-		if (shutdown(exit_s))
-			exit(exit_s);
+		exit_or_cont(exit_s);
 	} /*
 	 if (exit_s == 0)
 		 exit(127); */
