@@ -10,19 +10,33 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <limits.h>
+#include <ctype.h>
 extern char **environ;
+extern int last_exit_code;
 
-typedef int (*builtInHandler)(char **args);
+typedef struct
+{
+	char *cmd_name;
+	char **argv;
+	char **shell_argv;
+	int argc;
+	char **env;
+	int loopcnt;
+} exec_info;
+
+typedef int (*builtInHandler)(exec_info info);
+
 typedef struct
 {
 	char *name;
-	char **arguments;
+	char **args;
 	builtInHandler handler;
 } builtin;
 
 #define NUM_BUILTINS 2
 #define EXIT_NOT_FOUND 127
 #define EXIT_IMMEDIATE 7
+#define EXIT_ILLEGAL_NUM 2
 
 ssize_t get_line(char **lineptr, size_t *n, FILE *stream);
 int _setenv(const char *name, const char *value, int overwrite);
@@ -39,13 +53,14 @@ int find(char *dir_path, char *name);
 int str_contains(char c, char *str);
 #define PAPERSIZE "PAPERSIZE"
 builtInHandler builtin_handler(char *command_name);
-int env_fn(char **args);
-int exit_fn(char **args);
-int ls_fn(char **args);
+int env_fn(exec_info info);
+int exit_fn(exec_info info);
 char **get_toks(char *s);
 char *extern_handler(char *command_name);
-int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt);
 void free_str_arr(char **arr, int limit);
 int exit_or_cont(int status_code);
+int is_digits(char *str);
+int word_count(char *str);
+int executor(exec_info info);
 
 #endif

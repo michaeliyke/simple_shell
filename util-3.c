@@ -3,17 +3,18 @@
 /**
  * executor - the middle multiplexer
  * @command_name: name of command
- * @argv: array of argument tokens strings from getline call
- * @av: original argv parameter passed from the commandline during call
+ * @argv: argv for the command being eexcuted (getline call)
+ * @av: original argv parameter passed from simple_shell commandline call
  * @env: the environment variables list
- * @loopcnt: loop count from main to keep track of loop count
+ * @lc: loop count from main to keep track of loop count
+ * @ac: argc for the command being executed
  *
  * Return: -1 on error or the exit code of the program just executed
  */
-int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt)
+int executor(exec_info ei)
 {
 	/* Handle builtin calls */
-	builtInHandler fn = builtin_handler(cmd_name);
+	builtInHandler fn = builtin_handler(ei.cmd_name);
 	pid_t child;
 	int status = 0;
 	char *tmp;
@@ -21,17 +22,18 @@ int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt)
 	if (fn)
 	{
 		/* it is a built in */
-		return (fn(argv));
+		return (fn(ei));
 	}
 
 	/* Handle external commands */
-	tmp = extern_handler(cmd_name);
-	argv[0] = tmp ? tmp : argv[0]; /* Don't overwrite argv[0] right away */
+	tmp = extern_handler(ei.cmd_name);
+	ei.argv[0] = tmp ? tmp : ei.argv[0]; /* Don't overwrite argv[0] right away */
 	if (tmp == NULL)
 	{
 
 		dprintf(
-		    2, "%s: %d: %s: not found\n", av[0], loopcnt, cmd_name);
+		    2, "%s: %d: %s: not found\n",
+		    ei.shell_argv[0], ei.loopcnt, ei.cmd_name);
 		return (EXIT_NOT_FOUND);
 	}
 	else
@@ -40,11 +42,11 @@ int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt)
 		child = fork();
 		if (child == 0)
 		{
-			if (execve(argv[0], argv, env) == -1)
+			if (execve(ei.argv[0], ei.argv, ei.env) == -1)
 			{ /* exit status of -1 means command not found */
 				dprintf(
-				    2, "%s: %d: %s: not found\n", av[0],
-				    loopcnt, cmd_name);
+				    2, "%s: %d: %s: not found\n",
+				    ei.shell_argv[0], ei.loopcnt, ei.cmd_name);
 				_exit(EXIT_NOT_FOUND); /* This has not effect as child already exited */
 			}
 		}
@@ -143,21 +145,53 @@ void free_str_arr(char **arr, int limit)
  */
 int exit_or_cont(int exit_code)
 {
-	static int last_exit_code = INT_MAX; /* Default value for first run */
-
 	switch (exit_code)
 	{
 	case EXIT_NOT_FOUND:
 		exit(EXIT_NOT_FOUND);
 		break;
+	case EXIT_ILLEGAL_NUM:
+		exit(EXIT_ILLEGAL_NUM);
+		break;
 	case EXIT_IMMEDIATE:
 		/**
 		 * This comes from the exit inbuilt
 		 * The default is 0 meaning no command has been ran yet
+		 * (last_exit_code == INT_MAX ? 0 : last_exit_code)
 		 */
-		exit(last_exit_code == INT_MAX ? 0 : last_exit_code);
+		exit((last_exit_code == INT_MAX ? 0 : last_exit_code));
 		break;
 	}
 	last_exit_code = exit_code; /* save the exit code for future use */
 	return (last_exit_code);
+}
+
+/**
+ * word_count - count the number of words in a string
+ * @str: string of characters
+ *
+ * Return: count of words in a str
+ *
+ * NOTE: Words are delimitred by spaces and newlines only
+ */
+int word_count(char *str)
+{
+	int in_word = 0, count = 0;
+
+	if (!str)
+		return (0);
+	while (*str)
+	{
+		if (isspace(*str)) /* if space, set in_word, and skip over */
+			in_word = 0;
+		else /* if not space */
+		{    /** if we are in word, skip until we find a space
+		      * if we find a space, update in_word and count
+		      * */
+			if (!in_word)
+				in_word = 1, count++;
+		}
+		str++;
+	}
+	return (count);
 }
