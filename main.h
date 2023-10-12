@@ -55,7 +55,7 @@ int str_contains(char c, char *str);
 builtInHandler builtin_handler(char *command_name);
 int env_fn(exec_info info);
 int exit_fn(exec_info info);
-int cd_fn(char **args);
+int cd_fn(exec_info ei);
 char **get_toks(char *s);
 char *extern_handler(char *command_name);
 void free_str_arr(char **arr, int limit);

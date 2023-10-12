@@ -6,7 +6,7 @@
  *
  * Return: exit status
  */
-int cd_fn(char **args)
+int cd_fn(exec_info ei)
 {
 	char *path;
 	char *cwd = malloc(sizeof(char) * 30);
@@ -14,15 +14,14 @@ int cd_fn(char **args)
 
 	getcwd(cwd, 30);
 
-	if (*(args + 1) == NULL)
+	if (*(ei.argv + 1) == NULL)
 		path = _getenv("HOME");
-	else if (*(args + 1)[0] == '-')
+	else if (*(ei.argv + 1)[0] == '-')
 		printf("%s\n", path = _getenv("OLDPWD"));
-	else if (*(args + 1)[0] == '/')
-		path = args[1];
-	else
-		if (path_exists(args[1]))
-			path = realpath(args[1], NULL);
+	else if (*(ei.argv + 1)[0] == '/')
+		path = ei.argv[1];
+	else if (path_exists(ei.argv[1]))
+		path = realpath(ei.argv[1], NULL);
 
 	if (path == NULL)
 		return (0);
@@ -30,11 +29,11 @@ int cd_fn(char **args)
 	if (status == 0)
 	{
 		_setenv("OLDPWD", _getenv("PWD"), 1);
-       		_setenv("PWD", path, 1);
+		_setenv("PWD", path, 1);
 	}
 	else
 	{
-		dprintf(2, "./hsh: 1: cd: can't cd to %s\n", args[1]);
+		dprintf(2, "./hsh: 1: cd: can't cd to %s\n", ei.argv[1]);
 	}
 	return (0);
 }
