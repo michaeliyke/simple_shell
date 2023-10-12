@@ -19,12 +19,14 @@ int main(int ac, char **av, char **env)
 
 	(void)ac;
 	(void)exit_s;
+	(void)read_status;
 	while (1)
 	{
 		loopcnt++;
 		if (term == 1)
 			printf("$ ");
-		if ((read_status = get_line(&line, &i, stdin)) == -1)
+		read_status = get_line(&line, &i, stdin);
+		if (read_status == -1)
 			break;
 		word_cnt = word_count(line);
 		tmp = strdup(line);

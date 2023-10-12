@@ -3,7 +3,7 @@
 /**
  * exists - if a token word or path exists in the system
  * @token: a resource name or path
- * @abs_path: pointer to recieve the resolved absolute path
+ * @abs_ptr: pointer to recieve the resolved absolute path
  *
  * Return: 1 for true and 0 for false
  * NOTE:
@@ -62,10 +62,9 @@ int is_program(char *path)
 }
 
 /**
- * get_dirs - get an array of system paths
- * @str: system path in one string
+ * get_sys_paths - get an array of system paths
  *
- * Return: a null terminated array of systme path
+ * Return: a null terminated array of system paths
  * Returns a string of strings or a NULL
  */
 char **get_sys_paths()
@@ -138,16 +137,4 @@ int find(char *dir_path, char *name)
 	}
 	closedir(dir);
 	return (0);
-}
-
-/**
- * str_contains - check if a character is contined in a string
- * @c: the character to check
- * @str: the string to check against
- *
- * Return: 1 if true and 0 if false
- */
-int str_contains(char c, char *str)
-{
-	return (strchr(str, c) != NULL);
 }

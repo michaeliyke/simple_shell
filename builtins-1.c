@@ -1,8 +1,8 @@
 #include "main.h"
 
 /**
- * cd - changes working directory
- * @args: array of argument tokens
+ * cd_fn - changes working directory
+ * @ei: execution info
  *
  * Return: exit status
  */
@@ -37,9 +37,10 @@ int cd_fn(exec_info ei)
 	}
 	return (0);
 }
+
 /**
- * env - exits the program
- * @args: array of argument tokens
+ * env_fn - exits the program
+ * @ei: execution information
  *
  * Return: exit status
  */
@@ -55,8 +56,8 @@ int env_fn(exec_info ei)
 }
 
 /**
- * exit - exits the program
- * @args: array of argument tokens
+ * exit_fn - exits the program
+ * @ei: execution information
  *
  * Return: exit status
  */
@@ -78,6 +79,12 @@ int exit_fn(exec_info ei)
 	return (EXIT_IMMEDIATE);
 }
 
+/**
+ * is_digits - check if a string is a number
+ * @str: the str to be ckeck
+ *
+ * Return: 1 for true and 0 for false
+ */
 int is_digits(char *str)
 {
 	int i = 0;

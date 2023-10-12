@@ -92,9 +92,9 @@ char *get_abs_path(char *name)
 	if (path_exists(name))
 	{ /* Handle full and relative paths here */
 		if (*name == '.')
-			return realpath(name, NULL);
+			return (realpath(name, NULL));
 		if (*name == '/')
-			return name;
+			return (name);
 	}
 
 	/* Go through the path and search for the given  name */
@@ -158,38 +158,4 @@ char *_getenv(char *var_name)
 		}
 	}
 	return (value);
-}
-
-/**
- * _strtok - retrieves string word from a string given a set separators
- * @str: source string
- * @sep: string input containing one or more separators
- *
- * Return: The first word encountered
- * first call chops off a word
- * next call must be with null
- */
-char *_strtok(char *str, const char *sep)
-{
-	static char *next = NULL;
-	char *token; /* The returned token */
-
-	if (str) /* will be true for first execution */
-		next = str;
-	else if (!next || *next == '\0') /* true for last execution */
-		return (NULL);
-	while (*next && strchr(sep, *next))
-		next++; /* skipp beyond sep chars */
-	if (*next == '\0')
-		return (NULL); /* return if it's the end */
-
-	token = next; /* token startes here */
-	while (*next && !strchr(sep, *next))
-		next++; /* skip until the end or a sep char */
-	if (*next)
-	{ /* it's not the end, it's a sep char, so terminate token here */
-		*next = '\0';
-		next++; /* start the next token */
-	}
-	return (token);
 }

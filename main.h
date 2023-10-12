@@ -14,7 +14,16 @@
 extern char **environ;
 extern int last_exit_code;
 
-typedef struct
+/**
+ * struct exec_info - Struct for passing command info to executor and handlers
+ * @cmd_name: command name
+ * @argv: command argv
+ * @shell_argv: the argv originally passed to simple_shell
+ * @argc: command argc
+ * @env: the user environment
+ * @loopcnt: variable to track the loop count from main
+ */
+typedef struct exec_info
 {
 	char *cmd_name;
 	char **argv;
@@ -26,7 +35,13 @@ typedef struct
 
 typedef int (*builtInHandler)(exec_info info);
 
-typedef struct
+/**
+ * struct builtin - Struct for registering a new builtin command handler
+ * @name: the command name to be registered
+ * @args: the command arguments, this is likely to be removed
+ * @handler: the handler function to process the command
+ */
+typedef struct builtin
 {
 	char *name;
 	char **args;
