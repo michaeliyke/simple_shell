@@ -1,4 +1,4 @@
-#include "main.h";
+#include "main.h"
 
 /**
  * _strtok - retrieves string word from a string given a set separators

@@ -78,5 +78,6 @@ int exit_or_cont(int status_code);
 int is_digits(char *str);
 int word_count(char *str);
 int executor(exec_info info);
+int exec_child(exec_info ei);
 
 #endif
