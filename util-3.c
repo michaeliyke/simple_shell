@@ -74,6 +74,7 @@ builtInHandler builtin_handler(char *command_name)
 	builtin builtins[] = {
 	    {"env", NULL, env_fn},
 	    {"exit", NULL, exit_fn},
+	    {"cd", NULL, cd_fn},
 	    {NULL, NULL, NULL},
 	};
 	int i;

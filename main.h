@@ -33,7 +33,7 @@ typedef struct
 	builtInHandler handler;
 } builtin;
 
-#define NUM_BUILTINS 2
+#define NUM_BUILTINS 3
 #define EXIT_NOT_FOUND 127
 #define EXIT_IMMEDIATE 7
 #define EXIT_ILLEGAL_NUM 2
@@ -55,6 +55,7 @@ int str_contains(char c, char *str);
 builtInHandler builtin_handler(char *command_name);
 int env_fn(exec_info info);
 int exit_fn(exec_info info);
+int cd_fn(char **args);
 char **get_toks(char *s);
 char *extern_handler(char *command_name);
 void free_str_arr(char **arr, int limit);
