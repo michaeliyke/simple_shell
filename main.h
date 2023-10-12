@@ -19,7 +19,7 @@ typedef struct
 	builtInHandler handler;
 } builtin;
 
-#define NUM_BUILTINS 2
+#define NUM_BUILTINS 3
 #define EXIT_NOT_FOUND 127
 #define EXIT_IMMEDIATE 7
 
@@ -40,7 +40,7 @@ int str_contains(char c, char *str);
 builtInHandler builtin_handler(char *command_name);
 int env_fn(char **args);
 int exit_fn(char **args);
-int ls_fn(char **args);
+int cd_fn(char **args);
 char **get_toks(char *s);
 char *extern_handler(char *command_name);
 int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt);
