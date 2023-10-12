@@ -9,6 +9,7 @@
 #include <sys/wait.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <limits.h>
 extern char **environ;
 
 typedef int (*builtInHandler)(char **args);
