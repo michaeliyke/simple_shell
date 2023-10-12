@@ -3,9 +3,12 @@
 /**
  * executor - the middle multiplexer
  * @command_name: name of command
- * @tokenized_args: array of argument tokens strings
+ * @argv: array of argument tokens strings from getline call
+ * @av: original argv parameter passed from the commandline during call
+ * @env: the environment variables list
+ * @loopcnt: loop count from main to keep track of loop count
  *
- * Return: void
+ * Return: -1 on error or the exit code of the program just executed
  */
 int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt)
 {
@@ -38,15 +41,21 @@ int executor(char *cmd_name, char **av, char **argv, char **env, int loopcnt)
 		if (child == 0)
 		{
 			if (execve(argv[0], argv, env) == -1)
-			{
+			{ /* exit status of -1 means command not found */
 				dprintf(
 				    2, "%s: %d: %s: not found\n", av[0],
 				    loopcnt, cmd_name);
-				_exit(EXIT_NOT_FOUND);
+				_exit(EXIT_NOT_FOUND); /* This has not effect as child already exited */
 			}
 		}
 		else
-			wait(&status);
+		{
+			wait(&status);	       /* Awaits the exits status of child process, not the program */
+			if (WIFEXITED(status)) /* Program shutdown by itself and not forced by system */
+			{
+				return (WEXITSTATUS(status)); /* The exit code of the program just ran */
+			}
+		}
 		return (status);
 	}
 	return (status);
@@ -128,20 +137,27 @@ void free_str_arr(char **arr, int limit)
 
 /**
  * exit_or_cont - The program will exit here using exit code
- * @status_code: exit status code
+ * @exit_code: exit status code
  *
- * Return: return 1 for true and 0 for false
+ * Return: the exit code of last command
  */
-int exit_or_cont(int status_code)
+int exit_or_cont(int exit_code)
 {
-	switch (status_code)
+	static int last_exit_code = INT_MAX; /* Default value for first run */
+
+	switch (exit_code)
 	{
 	case EXIT_NOT_FOUND:
 		exit(EXIT_NOT_FOUND);
 		break;
 	case EXIT_IMMEDIATE:
-		exit(0);
+		/**
+		 * This comes from the exit inbuilt
+		 * The default is 0 meaning no command has been ran yet
+		 */
+		exit(last_exit_code == INT_MAX ? 0 : last_exit_code);
 		break;
 	}
-	return (0);
+	last_exit_code = exit_code; /* save the exit code for future use */
+	return (last_exit_code);
 }
