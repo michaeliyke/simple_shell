@@ -73,7 +73,7 @@ int exit_fn(exec_info info);
 int cd_fn(exec_info ei);
 char **get_toks(char *s);
 char *extern_handler(char *command_name);
-void free_str_arr(char **arr, int limit);
+void free_get_toks(char **toks);
 int exit_or_cont(int status_code);
 int is_digits(char *str);
 int word_count(char *str);

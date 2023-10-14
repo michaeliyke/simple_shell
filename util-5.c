@@ -106,22 +106,19 @@ int word_count(char *str)
 }
 
 /**
- * free_str_arr - free an arry of strings
- * @arr: the array to free
- * @limit: integer limit
+ * free_get_toks - frees the memory allocated by get_toks function
+ * @toks: pointer to string tokens
  *
  * Return: void
  */
-void free_str_arr(char **arr, int limit)
+void free_get_toks(char **toks)
 {
 	int i = 0;
 
-	(void)i;
-	(void)limit;
-	while (i < limit)
+	while (toks[i])
 	{
-		free(arr[i]);
+		free(toks[i]);
 		i++;
 	}
-	free(arr);
+	free(toks);
 }
