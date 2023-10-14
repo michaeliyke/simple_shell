@@ -116,7 +116,12 @@ void free_str_arr(char **arr, int limit)
 {
 	int i = 0;
 
+	(void)i;
+	(void)limit;
 	while (i < limit)
-		free(arr[i++]);
+	{
+		free(arr[i]);
+		i++;
+	}
 	free(arr);
 }

@@ -30,7 +30,7 @@ int main(int ac, char **av, char **env)
 			break;
 		word_cnt = word_count(line);
 		tmp = strdup(line);
-		buff = _strtok(tmp, " \n"); /* raw command name */
+		buff = strdup(_strtok(tmp, " \n")); /* raw command name */
 		if (buff)
 		{ /* if (buff), exec the cmd and return status code */
 			info.cmd_name = buff;
@@ -41,6 +41,15 @@ int main(int ac, char **av, char **env)
 			info.loopcnt = loopcnt;
 			exit_s = executor(info);
 		}
+		free(tmp);
+		i = 0;
+		/* while (info.argv[i])
+		{
+			printf("%s\n", info.argv[i]);
+			free(info.argv[i]);
+			i++;
+		}
+		free(info.argv); */
 		exit_or_cont(exit_s);
 	}
 	return (0);

@@ -44,3 +44,19 @@ ssize_t get_line(char **lineptr, size_t *n, FILE *stream)
 
 	return (bytesRead);
 }
+
+/**
+ * is_digits - check if a string is a number
+ * @str: the str to be ckeck
+ *
+ * Return: 1 for true and 0 for false
+ */
+int is_digits(char *str)
+{
+	int i = 0;
+
+	while (str[i])
+		if (!isdigit(str[i++]))
+			return (0);
+	return (str[0] ? 1 : 0);
+}

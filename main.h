@@ -25,12 +25,12 @@ extern int last_exit_code;
  */
 typedef struct exec_info
 {
-	char *cmd_name;
-	char **argv;
-	char **shell_argv;
-	int argc;
-	char **env;
-	int loopcnt;
+	char *cmd_name;	   /* Name of command */
+	char **argv;	   /* Command arguments */
+	char **shell_argv; /* Original simple_shell arguments */
+	int argc;	   /* Command arguments count */
+	char **env;	   /* User environment */
+	int loopcnt;	   /* Loop count control flow from main */
 } exec_info;
 
 typedef int (*builtInHandler)(exec_info info);
@@ -43,12 +43,12 @@ typedef int (*builtInHandler)(exec_info info);
  */
 typedef struct builtin
 {
-	char *name;
-	char **args;
-	builtInHandler handler;
+	char *name;		/* Command name */
+	char **args;		/* Command arguments */
+	builtInHandler handler; /* Command handler */
 } builtin;
 
-#define NUM_BUILTINS 3
+#define NUM_BUILTINS 5
 #define EXIT_NOT_FOUND 127
 #define EXIT_IMMEDIATE 7
 #define EXIT_ILLEGAL_NUM 2
@@ -79,5 +79,7 @@ int is_digits(char *str);
 int word_count(char *str);
 int executor(exec_info info);
 int exec_child(exec_info ei);
+int setenv_fn(exec_info ei);
+int unsetenv_fn(exec_info ei);
 
 #endif

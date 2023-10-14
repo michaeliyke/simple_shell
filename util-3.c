@@ -80,6 +80,8 @@ builtInHandler builtin_handler(char *command_name)
 	    {"env", NULL, env_fn},
 	    {"exit", NULL, exit_fn},
 	    {"cd", NULL, cd_fn},
+	    {"setenv", NULL, setenv_fn},
+	    {"unsetenv", NULL, unsetenv_fn},
 	    {NULL, NULL, NULL},
 	};
 	int i;
@@ -114,16 +116,22 @@ char *extern_handler(char *command_name)
  */
 char **get_toks(char *s)
 {
-	char **argv = malloc(sizeof(char *) * 31), *buff;
-	int n;
+	int n = 0, wc = word_count(s);
+	char **argv = malloc(sizeof(char *) * (wc + 1)), *buff;
 
 	buff = _strtok(s, " \n");
-	for (n = 0; buff; n++)
+	for (; buff; n++)
 	{
 
-		argv[n] = buff;
+		argv[n] = strdup(buff);
 		buff = _strtok(NULL, " \n");
 	}
 	argv[n] = NULL;
 	return (argv);
 }
+
+/**
+ * I am testing get_toks for strdup
+ * Want to strdup all its elemnts to enable effective freeing
+ * But it's failing
+ */

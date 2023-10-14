@@ -80,17 +80,43 @@ int exit_fn(exec_info ei)
 }
 
 /**
- * is_digits - check if a string is a number
- * @str: the str to be ckeck
+ * setenv_fn - sets a variable in the user environment
+ * @ei: runtime execution information
  *
- * Return: 1 for true and 0 for false
+ * Return: 0 if successful and -1 if not
  */
-int is_digits(char *str)
+int setenv_fn(exec_info ei)
 {
-	int i = 0;
+	char **argv = ei.argv;
+	int argc = ei.argc;
 
-	while (str[i])
-		if (!isdigit(str[i++]))
-			return (0);
-	return (str[0] ? 1 : 0);
+	/* TODO:  should print sth to stderr on failure*/
+
+	if (argc < 3)
+		return (-1);
+	if (_setenv(argv[1], argv[2], 1) == 0)
+		return (0);
+	dprintf(2, "Failure");
+	return (-1);
+}
+
+/**
+ * unsetenv_fn - sets a variable in the user environment
+ * @ei: runtime execution information
+ *
+ * Return: 0 if successful and -1 if not
+ */
+int unsetenv_fn(exec_info ei)
+{
+	char **argv = ei.argv;
+	int argc = ei.argc;
+
+	/* TODO:  should print sth to stderr on failure*/
+
+	if (argc < 2)
+		return (-1);
+	if (_unsetenv(argv[1]) == 0)
+		return (0);
+	dprintf(2, "Failure");
+	return (-1);
 }
