@@ -1,6 +1,5 @@
 #include "main.h"
 
-int last_exit_code = INT_MAX; /* Default value for first run */
 /**
  * main - main shell func
  * @ac: arg count
@@ -20,6 +19,7 @@ int main(int ac, char **av, char **env)
 	(void)ac;
 	(void)exit_s;
 	(void)read_status;
+	info.last_exit_code = INT_MAX; /* Default value for first run */
 	while (1)
 	{
 		loopcnt++;
@@ -39,8 +39,8 @@ int main(int ac, char **av, char **env)
 		info.argc = word_cnt;
 		info.env = env;
 		info.loopcnt = loopcnt;
-		exit_s = executor(info);
-		exit_or_cont(exit_s);
+		exit_s = executor(&info);
+		exit_or_cont(exit_s, &info);
 		free_get_toks(toks);
 	}
 	return (0);

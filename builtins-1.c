@@ -6,7 +6,7 @@
  *
  * Return: exit status
  */
-int cd_fn(exec_info ei)
+int cd_fn(exec_info *ei)
 {
 	char *path;
 	char *cwd = malloc(sizeof(char) * 30);
@@ -14,14 +14,14 @@ int cd_fn(exec_info ei)
 
 	getcwd(cwd, 30);
 
-	if (*(ei.argv + 1) == NULL)
+	if (*(ei->argv + 1) == NULL)
 		path = _getenv("HOME");
-	else if (*(ei.argv + 1)[0] == '-')
+	else if (*(ei->argv + 1)[0] == '-')
 		printf("%s\n", path = _getenv("OLDPWD"));
-	else if (*(ei.argv + 1)[0] == '/')
-		path = ei.argv[1];
-	else if (path_exists(ei.argv[1]))
-		path = realpath(ei.argv[1], NULL);
+	else if (*(ei->argv + 1)[0] == '/')
+		path = ei->argv[1];
+	else if (path_exists(ei->argv[1]))
+		path = realpath(ei->argv[1], NULL);
 
 	if (path == NULL)
 		return (0);
@@ -33,7 +33,7 @@ int cd_fn(exec_info ei)
 	}
 	else
 	{
-		dprintf(2, "./hsh: 1: cd: can't cd to %s\n", ei.argv[1]);
+		dprintf(2, "./hsh: 1: cd: can't cd to %s\n", ei->argv[1]);
 	}
 	return (0);
 }
@@ -44,7 +44,7 @@ int cd_fn(exec_info ei)
  *
  * Return: exit status
  */
-int env_fn(exec_info ei)
+int env_fn(exec_info *ei)
 {
 	size_t i;
 
@@ -61,18 +61,18 @@ int env_fn(exec_info ei)
  *
  * Return: exit status
  */
-int exit_fn(exec_info ei)
+int exit_fn(exec_info *ei)
 {
-	if (ei.argc > 1)
+	if (ei->argc > 1)
 	{
-		if (is_digits(ei.argv[1]))
-			last_exit_code = atoi(ei.argv[1]);
+		if (is_digits(ei->argv[1]))
+			ei->last_exit_code = atoi(ei->argv[1]);
 		else
 		{
 			dprintf(
 			    2, "%s: %d: %s: Illegal number: %s\n",
-			    ei.shell_argv[0], ei.loopcnt, ei.cmd_name,
-			    ei.argv[1]);
+			    ei->shell_argv[0], ei->loopcnt, ei->cmd_name,
+			    ei->argv[1]);
 			return (EXIT_ILLEGAL_NUM);
 		}
 	}
@@ -85,10 +85,10 @@ int exit_fn(exec_info ei)
  *
  * Return: 0 if successful and -1 if not
  */
-int setenv_fn(exec_info ei)
+int setenv_fn(exec_info *ei)
 {
-	char **argv = ei.argv;
-	int argc = ei.argc;
+	char **argv = ei->argv;
+	int argc = ei->argc;
 
 	/* TODO:  should print sth to stderr on failure*/
 
@@ -106,10 +106,10 @@ int setenv_fn(exec_info ei)
  *
  * Return: 0 if successful and -1 if not
  */
-int unsetenv_fn(exec_info ei)
+int unsetenv_fn(exec_info *ei)
 {
-	char **argv = ei.argv;
-	int argc = ei.argc;
+	char **argv = ei->argv;
+	int argc = ei->argc;
 
 	/* TODO:  should print sth to stderr on failure*/
 

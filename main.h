@@ -12,7 +12,6 @@
 #include <limits.h>
 #include <ctype.h>
 extern char **environ;
-extern int last_exit_code;
 
 /**
  * struct exec_info - Struct for passing command info to executor and handlers
@@ -22,18 +21,20 @@ extern int last_exit_code;
  * @argc: command argc
  * @env: the user environment
  * @loopcnt: variable to track the loop count from main
+ * @last_exit_code: exit cod of last command
  */
 typedef struct exec_info
 {
-	char *cmd_name;	   /* Name of command */
-	char **argv;	   /* Command arguments */
-	char **shell_argv; /* Original simple_shell arguments */
-	int argc;	   /* Command arguments count */
-	char **env;	   /* User environment */
-	int loopcnt;	   /* Loop count control flow from main */
+	char *cmd_name;	    /* Name of command */
+	char **argv;	    /* Command arguments */
+	char **shell_argv;  /* Original simple_shell arguments */
+	int argc;	    /* Command arguments count */
+	char **env;	    /* User environment */
+	int loopcnt;	    /* Loop count control flow from main */
+	int last_exit_code; /* exit code of last command */
 } exec_info;
 
-typedef int (*builtInHandler)(exec_info info);
+typedef int (*builtInHandler)(exec_info *info);
 
 /**
  * struct builtin - Struct for registering a new builtin command handler
@@ -68,18 +69,19 @@ int find(char *dir_path, char *name);
 int str_contains(char c, char *str);
 #define PAPERSIZE "PAPERSIZE"
 builtInHandler builtin_handler(char *command_name);
-int env_fn(exec_info info);
-int exit_fn(exec_info info);
-int cd_fn(exec_info ei);
+int env_fn(exec_info *info);
+int exit_fn(exec_info *info);
+int cd_fn(exec_info *ei);
 char **get_toks(char *s);
 char *extern_handler(char *command_name);
 void free_get_toks(char **toks);
-int exit_or_cont(int status_code);
+int exit_or_cont(int status_code, exec_info *ei);
 int is_digits(char *str);
 int word_count(char *str);
-int executor(exec_info info);
-int exec_child(exec_info ei);
-int setenv_fn(exec_info ei);
-int unsetenv_fn(exec_info ei);
+int executor(exec_info *info);
+int exec_child(exec_info *ei);
+int setenv_fn(exec_info *ei);
+int unsetenv_fn(exec_info *ei);
+void trunc_env(int new_size);
 
 #endif

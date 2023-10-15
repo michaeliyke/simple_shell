@@ -6,10 +6,10 @@
  *
  * Return: -1 on error or the exit code of the program just executed
  */
-int executor(exec_info ei)
+int executor(exec_info *ei)
 {
 	/* Handle builtin calls */
-	builtInHandler fn = builtin_handler(ei.cmd_name);
+	builtInHandler fn = builtin_handler(ei->cmd_name);
 	int status = 0;
 	char *tmp;
 
@@ -18,14 +18,14 @@ int executor(exec_info ei)
 		return (fn(ei));
 
 	/* Handle external commands */
-	tmp = extern_handler(ei.cmd_name);
-	ei.argv[0] = tmp ? tmp : ei.argv[0]; /* Don't overwrite argv[0] right away */
+	tmp = extern_handler(ei->cmd_name);
+	ei->argv[0] = tmp ? tmp : ei->argv[0]; /* Don't overwrite argv[0] right away */
 	if (tmp == NULL)
 	{
 
 		dprintf(
 		    2, "%s: %d: %s: not found\n",
-		    ei.shell_argv[0], ei.loopcnt, ei.cmd_name);
+		    ei->shell_argv[0], ei->loopcnt, ei->cmd_name);
 		return (EXIT_NOT_FOUND);
 	}
 	else
@@ -40,7 +40,7 @@ int executor(exec_info ei)
  *
  * Return: exit code of the program
  */
-int exec_child(exec_info ei)
+int exec_child(exec_info *ei)
 {
 	pid_t child;
 	int status = 0;
@@ -48,11 +48,11 @@ int exec_child(exec_info ei)
 	child = fork();
 	if (child == 0)
 	{
-		if (execve(ei.argv[0], ei.argv, ei.env) == -1)
+		if (execve(ei->argv[0], ei->argv, ei->env) == -1)
 		{ /* exit status of -1 means command not found */
 			dprintf(
 			    2, "%s: %d: %s: not found\n",
-			    ei.shell_argv[0], ei.loopcnt, ei.cmd_name);
+			    ei->shell_argv[0], ei->loopcnt, ei->cmd_name);
 			_exit(EXIT_NOT_FOUND);
 		} /* This has not effect as child already exited */
 	}

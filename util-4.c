@@ -60,3 +60,20 @@ int is_digits(char *str)
 			return (0);
 	return (str[0] ? 1 : 0);
 }
+
+/**
+ * trunc_env - reduces the environment to a desired size
+ * @new_size: the desired new size of environment
+ *
+ * Return: void
+ */
+void trunc_env(int new_size)
+{
+	int i;
+	char **vars = malloc(sizeof(char *) * new_size);
+
+	for (i = 0; i < new_size; i++)
+		vars[i] = strdup(environ[i]);
+	vars[i] = NULL;
+	environ = vars;
+}

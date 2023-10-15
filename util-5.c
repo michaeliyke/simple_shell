@@ -52,7 +52,7 @@ int str_contains(char c, char *str)
  *
  * Return: the exit code of last command
  */
-int exit_or_cont(int exit_code)
+int exit_or_cont(int exit_code, exec_info *ei)
 {
 	switch (exit_code)
 	{
@@ -68,11 +68,11 @@ int exit_or_cont(int exit_code)
 		 * The default is 0 meaning no command has been ran yet
 		 * (last_exit_code == INT_MAX ? 0 : last_exit_code)
 		 */
-		exit((last_exit_code == INT_MAX ? 0 : last_exit_code));
+		exit((ei->last_exit_code == INT_MAX ? 0 : ei->last_exit_code));
 		break;
 	}
-	last_exit_code = exit_code; /* save the exit code for future use */
-	return (last_exit_code);
+	ei->last_exit_code = exit_code; /* save the exit code for future use */
+	return (ei->last_exit_code);
 }
 
 /**
