@@ -77,3 +77,82 @@ void trunc_env(int new_size)
 	vars[i] = NULL;
 	environ = vars;
 }
+
+/**
+ * get_cmd_lines - breaks multiple command inputs separed by a semi colon into
+ * into an array of command lines for better handling
+ * @input: all of user input until newline; these are typically sent when the
+ * the ENTER key is pressed
+ *
+ * Return: and array of command lines terminated by a NULL pointer
+ * NOTE: command lines are separated by a semi colon
+ */
+char **get_cmd_lines(char *input)
+{
+	int count = 1, i = 0;
+	char *buff, **cmd_lines, *ptr;
+
+	if (input == NULL || *input == '\0')
+		return (NULL);
+	/* Below, we get the total number of commands */
+	for (ptr = input; *ptr; ptr++)
+		if (*ptr == ';')
+			count++;
+
+	cmd_lines = malloc(sizeof(char *) * (count + 2)); /* NULL inclusive */
+	/* Below, we get the first command, i.e everything before the ; */
+	buff = _strtok(input, ";"); /* buff is not malloc'd */
+
+	while (buff) /* If a buffer exists, store it and check again */
+	{
+		cmd_lines[i++] = trim(strdup(buff)); /* store a copy of buff */
+		buff = _strtok(NULL, ";");
+	}
+	cmd_lines[i] = NULL;
+	return (cmd_lines); /* should be free'd with when done */
+}
+
+/**
+ * trim - trims a string of spaced before and after
+ * The trim happens in place and no extra memory ir allocated
+ * @s: the input string
+ *
+ * Return: the original string trimmed and can be passed free'd with free
+ * NOTE: must be used on a malloc'd or strdup'd string
+ */
+char *trim(char *s)
+{
+	char *front = s, *end = NULL;
+	size_t len;
+
+	if (s == NULL || *s == '\0')
+		return (s == NULL ? NULL : '\0');
+	len = strlen(s);
+	end = s + len; /* moves end to the end of s */
+
+	/* isspace expects non-negative values to work correctly. */
+	/* if char is passed to isspace, it is converted to int */
+	while (isspace((unsigned char)*front))
+		front++; /* moves front to start of non-space chars */
+
+	if (end != front) /* moves end to the last non-space char in s */
+		while (isspace((unsigned char)*(--end)) && end != front)
+			;
+
+	if (s != front && end == front)
+	{ /* IThe entire string is whitespace, terminate s at *s and return */
+		*s = '\0';
+		return (s);
+	}
+	else if (s + (len - 1) != end)
+		*(end + 1) = '\0'; /* terminate the trimmed string at end+1 */
+	/* Boundary created. Now move this boundary backwards to start at *s */
+	end = s; /*Note how end has been moved to start from s */
+	if (front != s)
+	{
+		for (end = s; *front != '\0'; end++, front++)
+			*end = *front;
+		*end = '\0'; /*Terminate the new string*/
+	}
+	return (s);
+}

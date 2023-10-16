@@ -117,8 +117,11 @@ char *extern_handler(char *command_name)
 char **get_toks(char *s)
 {
 	int n = 0, wc = word_count(s);
-	char **argv = malloc(sizeof(char *) * (wc + 1)), *buff;
+	char **argv, *buff;
 
+	if (s == NULL || *s == '\0')
+		return (NULL);
+	argv = malloc(sizeof(char *) * (wc + 1));
 	buff = _strtok(s, " \n");
 	for (; buff; n++)
 	{
@@ -127,7 +130,7 @@ char **get_toks(char *s)
 		buff = _strtok(NULL, " \n");
 	}
 	argv[n] = NULL;
-	return (argv);
+	return (argv); /* should be free'd when done */
 }
 
 /**

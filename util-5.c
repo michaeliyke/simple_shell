@@ -111,7 +111,7 @@ int word_count(char *str)
  *
  * Return: void
  */
-void free_get_toks(char **toks)
+void free_str_arr(char **toks)
 {
 	int i = 0;
 

@@ -10,38 +10,41 @@
  */
 int main(int ac, char **av, char **env)
 {
-	char *line = NULL, **toks;
+	char *line = NULL, **toks, **lines, *user_input, **ptr;
 	int loopcnt = 0, term = isatty(0), exit_s = 0, word_cnt;
-	size_t i = 0; /* TODO: i variable to be renamed descriptively */
+	size_t buff_size = 0;
 	ssize_t read_status;
 	exec_info info;
 
 	(void)ac;
-	(void)exit_s;
-	(void)read_status;
 	info.last_exit_code = INT_MAX; /* Default value for first run */
-	while (1)
+	while (++loopcnt)
 	{
-		loopcnt++;
 		if (term == 1)
 			printf("$ ");
-		read_status = get_line(&line, &i, stdin);
+		read_status = get_line(&user_input, &buff_size, stdin);
 		if (read_status == -1)
+		{
+			free(user_input); /* to be free'd even upon failure */
 			break;
-		word_cnt = word_count(line);
-		if (word_cnt < 1)
-			continue;
-		/* exec a command and return a status code */
-		toks = get_toks(line);
-		info.cmd_name = toks[0];
-		info.argv = toks;
-		info.shell_argv = av;
-		info.argc = word_cnt;
-		info.env = env;
-		info.loopcnt = loopcnt;
-		exit_s = executor(&info);
-		exit_or_cont(exit_s, &info);
-		free_get_toks(toks);
+		}
+		lines = get_cmd_lines(user_input); /* Get all the cmd lines */
+		if (lines == NULL)
+			free(user_input);
+		for (ptr = lines; ptr && *ptr != NULL; ptr++)
+		{
+			word_cnt = word_count(*ptr); /* The argc for the cmd */
+			if (word_cnt > 0)
+			{ /* exec with the info obj and return a status code */
+				toks = get_toks(*ptr);
+				info.cmd_name = toks[0], info.argv = toks;
+				info.shell_argv = av, info.argc = word_cnt;
+				info.env = env, info.loopcnt = loopcnt;
+				exit_s = executor(&info);
+				exit_or_cont(exit_s, &info), free_str_arr(toks);
+			}
+		}
+		free(user_input), free_str_arr(lines);
 	}
 	return (0);
 }

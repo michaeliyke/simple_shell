@@ -74,7 +74,7 @@ int exit_fn(exec_info *info);
 int cd_fn(exec_info *ei);
 char **get_toks(char *s);
 char *extern_handler(char *command_name);
-void free_get_toks(char **toks);
+void free_str_arr(char **toks);
 int exit_or_cont(int status_code, exec_info *ei);
 int is_digits(char *str);
 int word_count(char *str);
@@ -83,5 +83,8 @@ int exec_child(exec_info *ei);
 int setenv_fn(exec_info *ei);
 int unsetenv_fn(exec_info *ei);
 void trunc_env(int new_size);
+char **get_cmd_lines(char *input);
+char *trim(char *str);
+char *trim2(char *str);
 
 #endif
