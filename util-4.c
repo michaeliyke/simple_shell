@@ -83,11 +83,12 @@ void trunc_env(int new_size)
  * into an array of command lines for better handling
  * @input: all of user input until newline; these are typically sent when the
  * the ENTER key is pressed
+ * @lc: Number of different commands found in user input
  *
  * Return: and array of command lines terminated by a NULL pointer
  * NOTE: command lines are separated by a semi colon
  */
-char **get_cmd_lines(char *input)
+char **get_cmd_lines(char *input, int *lc)
 {
 	int count = 1, i = 0;
 	char *buff, **cmd_lines, *ptr;
@@ -109,6 +110,7 @@ char **get_cmd_lines(char *input)
 		buff = _strtok(NULL, ";");
 	}
 	cmd_lines[i] = NULL;
+	*lc = count;
 	return (cmd_lines); /* should be free'd with when done */
 }
 

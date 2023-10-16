@@ -32,7 +32,7 @@ typedef struct exec_info
 	char **env;	    /* User environment */
 	int loopcnt;	    /* Loop count control flow from main */
 	int last_exit_code; /* exit code of last command */
-	int queues;	    /* number of commands in queue */
+	int queued;	    /* number of commands in queue */
 } exec_info;
 
 typedef int (*builtInHandler)(exec_info *info);
@@ -84,8 +84,8 @@ int exec_child(exec_info *ei);
 int setenv_fn(exec_info *ei);
 int unsetenv_fn(exec_info *ei);
 void trunc_env(int new_size);
-char **get_cmd_lines(char *input);
+char **get_cmd_lines(char *input, int *lc);
 char *trim(char *str);
-char *trim2(char *str);
+void run(char **av, char **env, exec_info *ei, char **ptr, int it);
 
 #endif

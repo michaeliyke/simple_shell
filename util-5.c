@@ -54,6 +54,12 @@ int str_contains(char c, char *str)
  */
 int exit_or_cont(int exit_code, exec_info *ei)
 {
+	ei->queued--;
+	if (ei->queued != 0)
+	{
+		ei->last_exit_code = exit_code;
+		return ei->last_exit_code;
+	}
 	switch (exit_code)
 	{
 	case EXIT_NOT_FOUND:
