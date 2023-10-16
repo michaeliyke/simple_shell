@@ -32,6 +32,7 @@ typedef struct exec_info
 	char **env;	    /* User environment */
 	int loopcnt;	    /* Loop count control flow from main */
 	int last_exit_code; /* exit code of last command */
+	int queues;	    /* number of commands in queue */
 } exec_info;
 
 typedef int (*builtInHandler)(exec_info *info);

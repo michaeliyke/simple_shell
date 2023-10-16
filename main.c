@@ -10,7 +10,7 @@
  */
 int main(int ac, char **av, char **env)
 {
-	char *line = NULL, **toks, **lines, *user_input, **ptr;
+	char **toks, **lines, *user_input = NULL, **ptr;
 	int loopcnt = 0, term = isatty(0), exit_s = 0, word_cnt;
 	size_t buff_size = 0;
 	ssize_t read_status;
@@ -44,7 +44,7 @@ int main(int ac, char **av, char **env)
 				exit_or_cont(exit_s, &info), free_str_arr(toks);
 			}
 		}
-		free(user_input), free_str_arr(lines);
+		free_str_arr(lines); /* user_input was free'd in get_line */
 	}
 	return (0);
 }
