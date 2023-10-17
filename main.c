@@ -15,10 +15,12 @@ int main(int ac, char **av, char **env)
 	size_t buff_size = 0;
 	ssize_t read_status;
 	exec_info info;
+	alias_t *al_list = NULL;
 	int lc; /* Number of commands found in user input */
 
 	(void)ac;
 	info.last_exit_code = INT_MAX; /* Default value for first run */
+	info.al_list = al_list;
 	while (++loopcnt)
 	{
 		if (term == 1)
@@ -56,11 +58,17 @@ void run(char **av, char **env, exec_info *ei, char **ptr, int loopcnt)
 	int exit_s = 0;
 	int word_cnt = word_count(*ptr); /* The argc for the cmd */
 	char **toks;
+	alias_t *n;
 
 	if (word_cnt > 0) /* exec with the info obj and return a status code */
 	{
 		toks = get_toks(*ptr);	  /* Token of a given command */
 		ei->cmd_name = toks[0];	  /* Command name or path */
+		for (n = ei->al_list; n != NULL; n = n->next)
+		{
+			if (strcmp(toks[0], n->name) == 0)
+				ei->cmd_name = n->value;
+		}
 		ei->argv = toks;	  /* Our command's argv */
 		ei->shell_argv = av;	  /* Argv passed to main func */
 		ei->argc = word_cnt;	  /* Our command's argc */

@@ -14,6 +14,19 @@
 extern char **environ;
 
 /**
+ * struct alias - linked list of aliases
+ * @name: name of alias
+ * @value: value of alias
+ * @next: pointer to next alias
+ */
+typedef struct alias
+{
+	char *name;
+	char *value;
+	struct alias *next;
+} alias_t;
+
+/**
  * struct exec_info - Struct for passing command info to executor and handlers
  * @cmd_name: command name
  * @argv: command argv
@@ -33,6 +46,7 @@ typedef struct exec_info
 	int loopcnt;	    /* Loop count control flow from main */
 	int last_exit_code; /* exit code of last command */
 	int queued;	    /* number of commands in queue */
+	alias_t *al_list;    /* list of aliases */
 } exec_info;
 
 typedef int (*builtInHandler)(exec_info *info);
@@ -50,7 +64,8 @@ typedef struct builtin
 	builtInHandler handler; /* Command handler */
 } builtin;
 
-#define NUM_BUILTINS 5
+
+#define NUM_BUILTINS 6
 #define EXIT_NOT_FOUND 127
 #define EXIT_IMMEDIATE 7
 #define EXIT_ILLEGAL_NUM 2
@@ -73,6 +88,7 @@ builtInHandler builtin_handler(char *command_name);
 int env_fn(exec_info *info);
 int exit_fn(exec_info *info);
 int cd_fn(exec_info *ei);
+int alias_fn(exec_info *ei);
 char **get_toks(char *s);
 char *extern_handler(char *command_name);
 void free_str_arr(char **toks);
@@ -87,5 +103,8 @@ void trunc_env(int new_size);
 char **get_cmd_lines(char *input, int *lc);
 char *trim(char *str);
 void run(char **av, char **env, exec_info *ei, char **ptr, int it);
-
+alias_t *add_node(alias_t **head, const char *n, const char *v);
+int print_list(const alias_t *h);
+void free_alias(alias_t *head);
+void new_node(exec_info *ei, char *arg, char *val);
 #endif
