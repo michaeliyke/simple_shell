@@ -25,7 +25,7 @@ int _setenv(const char *var_name, const char *value, int overwrite)
 		{ /* Does var_name= exists in the variable at *ptr ? */
 			if (overwrite == 1)
 			{
-				free(name_eq), free(*ptr);
+				free(name_eq);/* free(*ptr);*/
 				*ptr = var; /* if overwrite is set, effect it*/
 				return (0);
 			} /* If overwrite is not set just return success */
