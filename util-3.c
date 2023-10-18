@@ -82,6 +82,7 @@ builtInHandler builtin_handler(char *command_name)
 	    {"cd", NULL, cd_fn},
 	    {"setenv", NULL, setenv_fn},
 	    {"unsetenv", NULL, unsetenv_fn},
+	    {"alias", NULL, alias_fn},
 	    {NULL, NULL, NULL},
 	};
 	int i;
