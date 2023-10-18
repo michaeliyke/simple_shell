@@ -49,6 +49,7 @@ int str_contains(char c, char *str)
 /**
  * exit_or_cont - The program will exit here using exit code
  * @exit_code: exit status code
+ * @ei: execution info
  *
  * Return: the exit code of last command
  */
@@ -58,10 +59,16 @@ int exit_or_cont(int exit_code, exec_info *ei)
 	if (ei->queued != 0)
 	{
 		ei->last_exit_code = exit_code;
-		return ei->last_exit_code;
+		return (ei->last_exit_code);
 	}
 	switch (exit_code)
 	{
+	case WARN_UNEXPECTED:
+		dprintf(2,
+			"%s: %d: Syntax error: \"%s\" unexpected\n",
+			ei->shell_argv[0], ei->loopcnt, ei->cmd_name);
+		exit(EXIT_ILLEGAL_NUM);
+		break;
 	case EXIT_NOT_FOUND:
 		exit(EXIT_NOT_FOUND);
 		break;
@@ -112,7 +119,7 @@ int word_count(char *str)
 }
 
 /**
- * free_get_toks - frees the memory allocated by get_toks function
+ * free_str_arr - frees the memory allocated by get_toks function
  * @toks: pointer to string tokens
  *
  * Return: void

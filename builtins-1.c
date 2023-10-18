@@ -104,7 +104,10 @@ int setenv_fn(exec_info *ei)
 	/* TODO:  should print sth to stderr on failure*/
 
 	if (argc < 3)
+	{
+		dprintf(2, "Failure");
 		return (-1);
+	}
 	if (_setenv(argv[1], argv[2], 1) == 0)
 		return (0);
 	dprintf(2, "Failure");
@@ -125,7 +128,10 @@ int unsetenv_fn(exec_info *ei)
 	/* TODO:  should print sth to stderr on failure*/
 
 	if (argc < 2)
+	{
+		dprintf(2, "Failure");
 		return (-1);
+	}
 	if (_unsetenv(argv[1]) == 0)
 		return (0);
 	dprintf(2, "Failure");

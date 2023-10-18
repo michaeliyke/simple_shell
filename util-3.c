@@ -19,7 +19,7 @@ int executor(exec_info *ei)
 
 	/* Handle external commands */
 	tmp = extern_handler(ei->cmd_name);
-	ei->argv[0] = tmp ? tmp : ei->argv[0]; /* Don't overwrite argv[0] right away */
+	ei->argv[0] = tmp ? tmp : ei->argv[0]; /* Don't overwrite right away */
 	if (tmp == NULL)
 	{
 
@@ -118,12 +118,13 @@ char *extern_handler(char *command_name)
 char **get_toks(char *s)
 {
 	int n = 0, wc = word_count(s);
-	char **argv, *buff;
+	char **argv, *buff, *temp;
 
 	if (s == NULL || *s == '\0')
 		return (NULL);
 	argv = malloc(sizeof(char *) * (wc + 1));
-	buff = _strtok(s, " \n");
+	temp = strdup(s);
+	buff = _strtok(temp, " \n");
 	for (; buff; n++)
 	{
 
@@ -131,11 +132,6 @@ char **get_toks(char *s)
 		buff = _strtok(NULL, " \n");
 	}
 	argv[n] = NULL;
+	free(temp);
 	return (argv); /* should be free'd when done */
 }
-
-/**
- * I am testing get_toks for strdup
- * Want to strdup all its elemnts to enable effective freeing
- * But it's failing
- */
