@@ -10,9 +10,9 @@
  */
 int main(int ac, char **av, char **env)
 {
-	char **lines, *user_input = NULL, **ptr;
+	char **lines, *user_input = NULL;
 	int loopcnt = 0, term = isatty(0);
-	size_t buff_size = 0;
+	size_t buff_size = 0, x; /* x is a counter var */
 	ssize_t read_status;
 	exec_info info;
 	int lc; /* Number of commands found in user input */
@@ -30,13 +30,60 @@ int main(int ac, char **av, char **env)
 		if (lines == NULL)
 			free(user_input);
 		info.queued = lc; /* How many commands in queue */
-		for (ptr = lines; ptr && *ptr != NULL; ptr++)
-		{
-			run(av, env, &info, ptr, loopcnt);
+		for (x = 0; lines[x] != NULL; x++)
+		{ /* lines[x] reps each user command assuming multiple */
+			run(av, env, &info, lines[x], loopcnt);
 		}
 		free_str_arr(lines); /* user_input was free'd in get_line */
 	}
 	return (0);
+}
+
+/**
+ * run_bool - runs a given line conditionally.
+ * Assumes multiple commands were given along with boolean conditions
+ * @av: The argv argument from main func
+ * @env: the env argument from main func
+ * @ei: pointer to exec_info object passing to command handlers
+ * @ptr: pointer to the current command being executed from main func
+ * @lc: the loop count from main func
+ *
+ * Return: the status code of last command executed
+ */
+int run_bool(char **av, char **env, exec_info *ei, char *ptr, int lc)
+{
+	char **toks, *cmd = strdup(ptr);
+	int status_code = INT_MAX, status;
+
+	(void)av;
+	(void)env;
+	(void)lc;
+	while (1)
+	{
+		cmd = trim(get_next_boundary(ei, &cmd)); /* ptr shifted up */
+		if (!cmd)
+		{
+			break;
+		}
+		toks = get_toks(cmd); /* free with free_str_arr */
+		ei->cmd_name = toks[0];
+		ei->argv = toks;
+		ei->argc = word_count(cmd);
+		if (status_code == INT_MAX)
+		{
+			status_code = executor(ei);
+		}
+		else if (status_code != 0 && bool_is(ei, "||"))
+		{
+			status_code = executor(ei);
+		}
+		else if (status_code == 0 && bool_is(ei, "&&"))
+		{
+			status_code = executor(ei);
+		}
+		status = status_code;
+	}
+	return (status);
 }
 
 /**
@@ -47,27 +94,34 @@ int main(int ac, char **av, char **env)
  * @ei: pointer to exec_info object passing to command handlers
  * @ptr: pointer to the current command being executed from main func
  * @loopcnt: the loop count from main func
- * @lc: the command lines count that hold the number of command in queue
  *
  * Return: void
  */
-void run(char **av, char **env, exec_info *ei, char **ptr, int loopcnt)
+void run(char **av, char **env, exec_info *ei, char *ptr, int loopcnt)
 {
 	int exit_s = 0;
-	int word_cnt = word_count(*ptr); /* The argc for the cmd */
+	int word_cnt = word_count(ptr); /* The argc for the cmd */
 	char **toks;
 
-	if (word_cnt > 0) /* exec with the info obj and return a status code */
-	{
-		toks = get_toks(*ptr);	  /* Token of a given command */
-		ei->cmd_name = toks[0];	  /* Command name or path */
-		ei->argv = toks;	  /* Our command's argv */
-		ei->shell_argv = av;	  /* Argv passed to main func */
-		ei->argc = word_cnt;	  /* Our command's argc */
-		ei->env = env;		  /* The env passed to main func*/
-		ei->loopcnt = loopcnt;	  /* Loop count in main func */
-		exit_s = executor(ei);	  /* execute and return status code */
-		exit_or_cont(exit_s, ei); /* Using status code to quit/not */
-		free_str_arr(toks);	  /* Cleanup the memory used by tok */
+	if (word_cnt < 1)
+		return;
+	toks = get_toks(ptr);	/* Token of a given command */
+	ei->cmd_name = toks[0]; /* Command name or path */
+	ei->argv = toks;	/* Our command's argv */
+	ei->shell_argv = av;	/* Argv passed to main func */
+	ei->argc = word_cnt;	/* Our command's argc */
+	ei->env = env;		/* The env passed to main func*/
+	ei->loopcnt = loopcnt;	/* Loop count in main func */
+	if (check_has_bool(ptr))
+	{ /* Above checks if command has boolean operators */
+		exit_s = check_unexpected(ptr, ei);
+		if (exit_s == 0) /* unexpected syntax was not found */
+			exit_s = run_bool(av, env, ei, ptr, loopcnt);
+		/* else unexpected syntax was found, go straight to warning */
 	}
+	else
+		exit_s = executor(ei); /* Normal simple execution */
+
+	exit_or_cont(exit_s, ei); /* Using status code to quit/not */
+	free_str_arr(toks);	  /* Cleanup the memory used by tok */
 }

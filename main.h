@@ -22,6 +22,12 @@ extern char **environ;
  * @env: the user environment
  * @loopcnt: variable to track the loop count from main
  * @last_exit_code: exit cod of last command
+ * @queued: number of commandline operations queued for processing.
+ * They are each separaed with a semi-colon
+ * @AND: Logical AND i.e &&
+ * @OR: Logical OR i.e ||
+ * @has_bool: whether a boolean operation is in effect
+ * @bool_opt: the boolean operator in currently effect
  */
 typedef struct exec_info
 {
@@ -33,6 +39,10 @@ typedef struct exec_info
 	int loopcnt;	    /* Loop count control flow from main */
 	int last_exit_code; /* exit code of last command */
 	int queued;	    /* number of commands in queue */
+	int AND;	    /* Logical AND i.e && */
+	int OR;		    /* Logical OR i.e || */
+	int has_bool;	    /* Indicate if a bool is currently in effect */
+	char *bool_opt;	    /* The actual bool opt in effect */
 } exec_info;
 
 typedef int (*builtInHandler)(exec_info *info);
@@ -54,6 +64,7 @@ typedef struct builtin
 #define EXIT_NOT_FOUND 127
 #define EXIT_IMMEDIATE 7
 #define EXIT_ILLEGAL_NUM 2
+#define WARN_UNEXPECTED 14
 
 ssize_t get_line(char **lineptr, size_t *n, FILE *stream);
 int _setenv(const char *name, const char *value, int overwrite);
@@ -86,6 +97,13 @@ int unsetenv_fn(exec_info *ei);
 void trunc_env(int new_size);
 char **get_cmd_lines(char *input, int *lc);
 char *trim(char *str);
-void run(char **av, char **env, exec_info *ei, char **ptr, int it);
+void run(char **av, char **env, exec_info *ei, char *ptr, int it);
+int check_has_bool(char *line);
+int check_unexpected(char *line, exec_info *ei);
+int set_curr_bool(char *line, exec_info *ei);
+int bool_is(exec_info *ei, char *bool_);
+int run_bool(char **av, char **env, exec_info *ei, char *ptr, int lc);
+char *get_next_boundary(exec_info *ei, char **cmd);
+char *get_next_bool(char *line, int *bool_pos);
 
 #endif

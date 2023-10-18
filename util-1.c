@@ -2,7 +2,7 @@
 
 /**
  * _setenv - sets an environment variable
- * @name: name of variable to set
+ * @var_name: name of variable to set
  * @value: the value of the variable being set
  * @overwrite: should the variable be overwritten if exists already?
  *
@@ -128,6 +128,12 @@ char *_getenv(char *var_name)
 	return (value);
 }
 
+/**
+ * _unsetenv - unsets an environment variable for the current process
+ * @name: the name of the variable to be unset
+ *
+ * Return: 1 for success and other int value if failed
+ */
 int _unsetenv(const char *name)
 {
 	char **ptr, **new_env, **dist, *namepart;
