@@ -26,7 +26,7 @@ int exists(char *token, char **abs_ptr)
 		if (*token == '.')
 			*abs_ptr = realpath(token, NULL); /* maloc'd */
 		else if (*token == '/')			  /* path is aboslute*/
-			*abs_ptr = token;
+			*abs_ptr = strdup(token);
 		else
 			return (0);
 		return (1);
