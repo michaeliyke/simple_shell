@@ -37,10 +37,13 @@ typedef struct alias
  * @last_exit_code: exit cod of last command
  * @queued: number of commandline operations queued for processing.
  * They are each separaed with a semi-colon
- * @AND: Logical AND i.e &&
- * @OR: Logical OR i.e ||
- * @has_bool: whether a boolean operation is in effect
- * @bool_opt: the boolean operator in currently effect
+ * @bool_opt: (Deprecated) the boolean operator in currently effect
+ * @last_bool: The last bool encountered.
+ * This property is preserved between called to enable the || and &&
+ * operators connect effectively between executions
+ * @curr_bool: This last for present call only and is the present bool
+ * if any.
+ * @al_list: list of aliases
  */
 typedef struct exec_info
 {
@@ -52,10 +55,9 @@ typedef struct exec_info
 	int loopcnt;	    /* Loop count control flow from main */
 	int last_exit_code; /* exit code of last command */
 	int queued;	    /* number of commands in queue */
-	int AND;	    /* Logical AND i.e && */
-	int OR;		    /* Logical OR i.e || */
-	int has_bool;	    /* Indicate if a bool is currently in effect */
-	char *bool_opt;	    /* The actual bool opt in effect */
+	char *last_bool;    /* The last boolean token encountered */
+	char *curr_bool;    /* Current command's boolean token */
+	char *bool_opt;	    /* (Deprecated) The actual bool opt in effect */
 	alias_t *al_list;   /* list of aliases */
 } exec_info;
 

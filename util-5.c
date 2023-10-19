@@ -52,12 +52,15 @@ int str_contains(char c, char *str)
  * @ei: execution info
  *
  * Return: the exit code of last command
+ * NOTE: calls to free_str_arr(ei->argv) in this function will
+ * cleanup the memory used by toks in main.c
  */
 int exit_or_cont(int exit_code, exec_info *ei)
 {
 	ei->queued--;
 	if (ei->queued != 0)
 	{
+		free_str_arr(ei->argv); /* Free toks var of main.c */
 		ei->last_exit_code = exit_code;
 		return (ei->last_exit_code);
 	}
@@ -67,12 +70,15 @@ int exit_or_cont(int exit_code, exec_info *ei)
 		dprintf(2,
 			"%s: %d: Syntax error: \"%s\" unexpected\n",
 			ei->shell_argv[0], ei->loopcnt, ei->cmd_name);
+		free_str_arr(ei->argv); /* Free toks var of main.c */
 		exit(EXIT_ILLEGAL_NUM);
 		break;
 	case EXIT_NOT_FOUND:
+		free_str_arr(ei->argv); /* Free toks var of main.c */
 		exit(EXIT_NOT_FOUND);
 		break;
 	case EXIT_ILLEGAL_NUM:
+		free_str_arr(ei->argv); /* Free toks var of main.c */
 		exit(EXIT_ILLEGAL_NUM);
 		break;
 	case EXIT_IMMEDIATE:
@@ -81,9 +87,11 @@ int exit_or_cont(int exit_code, exec_info *ei)
 		 * The default is 0 meaning no command has been ran yet
 		 * (last_exit_code == INT_MAX ? 0 : last_exit_code)
 		 */
+		free_str_arr(ei->argv); /* Free toks var of main.c */
 		exit((ei->last_exit_code == INT_MAX ? 0 : ei->last_exit_code));
 		break;
 	}
+	free_str_arr(ei->argv);		/* Free toks var of main.c */
 	ei->last_exit_code = exit_code; /* save the exit code for future use */
 	return (ei->last_exit_code);
 }
@@ -104,7 +112,8 @@ int word_count(char *str)
 		return (0);
 	while (*str)
 	{
-		if (isspace(*str)) /* if space, set in_word, and skip over */
+		/* if space, set in_word, and skip over */
+		if (isspace(*str) || str_contains(*str, "&|"))
 			in_word = 0;
 		else /* if not space */
 		{    /** if we are in word, skip until we find a space
