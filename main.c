@@ -111,6 +111,11 @@ void run(char **av, char **env, exec_info *ei, char *ptr, int loopcnt)
 		return;
 	toks = get_toks(ptr);	/* Token of a given command */
 	ei->cmd_name = toks[0]; /* Command name or path */
+	for (n = ei->al_list; n != NULL; n = n->next)
+	{
+		if (strcmp(toks[0], n->name) == 0)
+			ei->cmd_name = n->value;
+	}
 	ei->argv = toks;	/* Our command's argv */
 	ei->shell_argv = av;	/* Argv passed to main func */
 	ei->argc = word_cnt;	/* Our command's argc */
