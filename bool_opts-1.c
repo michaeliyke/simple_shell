@@ -10,14 +10,14 @@
  */
 int set_curr_bool(char *line, exec_info *ei)
 {
-	int first_bool_char;
+	int bool_pos; /* index of first bool char if found */
 
-	ei->bool_opt = get_next_bool(line, &first_bool_char);
-	ei->AND = bool_is(ei, "&&");
-	ei->OR = bool_is(ei, "||");
-	ei->has_bool = ei->AND || ei->OR;
+	ei->curr_bool = get_next_bool(line, &bool_pos);
 
-	return (first_bool_char);
+	if (ei->curr_bool)
+		ei->last_bool = ei->curr_bool;
+
+	return (bool_pos);
 }
 
 /**
@@ -26,44 +26,39 @@ int set_curr_bool(char *line, exec_info *ei)
  * @bool_pos: this will be set to the position of the first bool character
  *
  * Return: string containing the next boolean operator or NULL
+ * NOTE: if bool is not found, bool_pos it set to -1
  */
 char *get_next_bool(char *line, int *bool_pos)
 {
-	char *ch;
+	char *ch = line, *ret_v = NULL;
 
-	if (line == NULL || *line == '\0')
+	if (line == NULL || *line == '\0' || bool_pos == NULL)
 		return (NULL);
 
-	for (ch = line; *ch; ch++)
-	{
-		if (*ch && *(ch + 1))
-		{
-			if (*ch == '&' && *(ch + 1) == '&')
-			{
-				*bool_pos = ch - line;
-				return ("&&");
-			}
-			else if (*ch == '|' && *(ch + 1) == '|')
-			{
-				*bool_pos = ch - line;
-				return ("||");
-			}
-		}
-	}
-	*bool_pos = ch - line; /* Hold a ref to the pos of first bool char*/
-	return (NULL);
+	while (isspace(*ch)) /* skip spaces */
+		ch++;
+
+	/* Hold a ref to the position of first bool char*/
+	if (*ch == '&' && *(ch + 1) == '&')
+		ret_v = "&&";
+	if (*ch == '|' && *(ch + 1) == '|')
+		ret_v = "||";
+	*bool_pos = ret_v ? (ch - line) : -1;
+	return (ret_v);
 }
 
 /**
- * bool_is - a bool with the current value of bool_opt for a match
+ * bool_is - tests whether the last bool encountered matches bool_
  * @bool_: random bool string to compare with
  * @ei: execution info
  *
- * Return: 1 if current value of bool_opt matches with bool_ and 0 otherwise
+ * Return: 1 if bool_ matches the last encountered bool and 0 otherwise
  */
 int bool_is(exec_info *ei, char *bool_)
 {
-	return (strcmp(ei->bool_opt, bool_) == 0);
+	if (!(ei->last_bool && bool_))
+		return (0);
+	return (strcmp(ei->last_bool, bool_) == 0);
 }
 
 /**
@@ -80,20 +75,30 @@ int bool_is(exec_info *ei, char *bool_)
  */
 char *get_next_boundary(exec_info *ei, char **cmd)
 {
-	char *p = *cmd, *out_str = *cmd; /* out_str is the returned boundary */
-	int pos;
+	char *ptr, *out, *mem; /* mem is the malloc'd memory returned */
+	int len;
 
 	if (*cmd == NULL || **cmd == '\0')
 		return (NULL);
-	/* setup ei to refelect current operation */
-	pos = set_curr_bool(*cmd, ei); /* pos is at the start of || or && */
-	/* Move p to start of next string: accounts for && or & */
-	p += strlen(ei->bool_opt) == 2 ? pos + 2 : pos + 1;
-	while (isspace(*cmd[pos - 1]))
-		pos--;	     /* backwards trims trailing spaces */
-	out_str[pos] = '\0'; /* Terminate the returned string */
-	*cmd = p;	     /* Move ptr to start of next command if any */
-	return (out_str);
+
+	set_curr_bool(*cmd, ei); /* setup ei to correctly reflect active bool*/
+	ptr = *cmd;
+	/* skip leading spaces and bool chars */
+	while (*ptr != '\0' && (isspace(*ptr) || *ptr == '|' || *ptr == '&'))
+		ptr++;
+	if (*ptr == '\0')
+		return ((void *)NULL); /* empty str */
+
+	/* Mark the boundary of string to return */
+	out = ptr;
+	while (*ptr != '\0' && !isspace(*ptr))
+		ptr++;
+	len = ptr - out;
+	mem = malloc(sizeof(char) * (len + 1));
+	strncpy(mem, out, len);
+	mem[len] = '\0';
+	*cmd = ptr;   /* Move *cmd to start of next command if any */
+	return (mem); /* malloc'd */
 }
 
 /**

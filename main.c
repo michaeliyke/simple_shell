@@ -54,15 +54,15 @@ int main(int ac, char **av, char **env)
  */
 int run_bool(char **av, char **env, exec_info *ei, char *ptr, int lc)
 {
-	char **toks, *cmd = strdup(ptr);
+	char **toks, *cmd, *cmds = strdup(ptr);
 	int status_code = INT_MAX, status;
 
 	(void)av;
 	(void)env;
 	(void)lc;
 	while (1)
-	{
-		cmd = trim(get_next_boundary(ei, &cmd)); /* ptr shifted up */
+	{						  /* Tobe free'd: cmds, toks */
+		cmd = trim(get_next_boundary(ei, &cmds)); /* ptr shifted up */
 		if (!cmd)
 		{
 			break;
@@ -106,6 +106,7 @@ void run(char **av, char **env, exec_info *ei, char *ptr, int loopcnt)
 	char **toks;
 	alias_t *n;
 
+	(void)n;
 	if (word_cnt < 1)
 		return;
 	toks = get_toks(ptr);	/* Token of a given command */

@@ -54,7 +54,8 @@ typedef struct exec_info
 	int queued;	    /* number of commands in queue */
 	int AND;	    /* Logical AND i.e && */
 	int OR;		    /* Logical OR i.e || */
-	int has_bool;	    /* Indicate if a bool is currently in effect */
+	char *last_bool;    /* The last boolean token encountered */
+	char *curr_bool;    /* Current command's boolean token */
 	char *bool_opt;	    /* The actual bool opt in effect */
 	alias_t *al_list;   /* list of aliases */
 } exec_info;
