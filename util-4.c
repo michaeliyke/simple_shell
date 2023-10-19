@@ -62,10 +62,12 @@ int is_digits(char *str)
 }
 
 /**
- * trunc_env - reduces the environment to a desired size
+ * trunc_env - reduces the environment to a desired size (malloc'd)
  * @new_size: the desired new size of environment
  *
  * Return: void
+ * NOTE: This function is only useful for debugging.
+ * It reduces the environ variable to a desired size
  */
 void trunc_env(int new_size)
 {
@@ -75,23 +77,24 @@ void trunc_env(int new_size)
 	for (i = 0; i < new_size; i++)
 		vars[i] = strdup(environ[i]);
 	vars[i] = NULL;
-	environ = vars;
+	environ = vars; /* To be free'd when done */
 }
 
 /**
  * get_cmd_lines - breaks multiple command inputs separed by a semi colon into
- * into an array of command lines for better handling
+ * into an array of command lines for better handling (malloc'd)
  * @input: all of user input until newline; these are typically sent when the
  * the ENTER key is pressed
  * @lc: Number of different commands found in user input
  *
  * Return: and array of command lines terminated by a NULL pointer
  * NOTE: command lines are separated by a semi colon
+ * It is to be called with the entire buffer contents from get_line()
  */
 char **get_cmd_lines(char *input, int *lc)
 {
 	int count = 1, i = 0;
-	char *buff, **cmd_lines, *ptr;
+	char *buff, **cmd_lines, *ptr, *temp;
 
 	if (input == NULL || *input == '\0')
 		return (NULL);
@@ -101,8 +104,10 @@ char **get_cmd_lines(char *input, int *lc)
 			count++;
 
 	cmd_lines = malloc(sizeof(char *) * (count + 2)); /* NULL inclusive */
+
+	temp = strdup(input); /* Don't modify original string */
 	/* Below, we get the first command, i.e everything before the ; */
-	buff = _strtok(input, ";"); /* buff is not malloc'd */
+	buff = _strtok(temp, ";"); /* buff is not malloc'd */
 
 	while (buff) /* If a buffer exists, store it and check again */
 	{
@@ -110,6 +115,7 @@ char **get_cmd_lines(char *input, int *lc)
 		buff = _strtok(NULL, ";");
 	}
 	cmd_lines[i] = NULL;
+	free(temp); /* Free the temporary memory */
 	*lc = count;
 	return (cmd_lines); /* should be free'd with when done */
 }
