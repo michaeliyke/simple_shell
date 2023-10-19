@@ -16,16 +16,21 @@ int main(int ac, char **av, char **env)
 	ssize_t read_status;
 	exec_info info;
 	alias_t *al_list = NULL;
+	FILE *f = ac == 2 ? fopen(av[1], "r") : stdin;
 	int lc; /* Number of commands found in user input */
 
-	(void)ac;
 	info.last_exit_code = INT_MAX; /* Default value for first run */
 	info.al_list = al_list;
 	while (++loopcnt)
 	{
-		if (term == 1)
+		if (f == NULL)
+		{
+			dprintf(2, "%s: 0: Can't open %s\n", av[0], av[1]);
+			exit(127);
+		}
+		if (term == 1 && ac != 2)
 			printf("$ ");
-		read_status = get_line(&user_input, &buff_size, stdin);
+		read_status = get_line(&user_input, &buff_size, f);
 		if (read_status == -1)
 			break;
 		lines = get_cmd_lines(user_input, &lc); /* all the cmd lines */
