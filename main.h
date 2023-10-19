@@ -52,11 +52,9 @@ typedef struct exec_info
 	int loopcnt;	    /* Loop count control flow from main */
 	int last_exit_code; /* exit code of last command */
 	int queued;	    /* number of commands in queue */
-	int AND;	    /* Logical AND i.e && */
-	int OR;		    /* Logical OR i.e || */
 	char *last_bool;    /* The last boolean token encountered */
 	char *curr_bool;    /* Current command's boolean token */
-	char *bool_opt;	    /* The actual bool opt in effect */
+	char *bool_opt;	    /* (Deprecated) The actual bool opt in effect */
 	alias_t *al_list;   /* list of aliases */
 } exec_info;
 

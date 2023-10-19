@@ -24,15 +24,15 @@ int exists(char *token, char **abs_ptr)
 		}
 		/* If path is relative, get the absolute path */
 		if (*token == '.')
-			*abs_ptr = realpath(token, NULL);
-		else if (*token == '/') /* path is aboslute */
+			*abs_ptr = realpath(token, NULL); /* maloc'd */
+		else if (*token == '/')			  /* path is aboslute*/
 			*abs_ptr = token;
 		else
 			return (0);
 		return (1);
 	}
 	/* Case of program name */
-	*abs_ptr = get_abs_path(token);
+	*abs_ptr = get_abs_path(token); /* malloc'd */
 	return (*abs_ptr != NULL && is_program(*abs_ptr));
 }
 
@@ -62,16 +62,15 @@ int is_program(char *path)
 }
 
 /**
- * get_sys_paths - get an array of system paths
+ * get_sys_paths - get an array of system paths (malloc'd)
  *
  * Return: a null terminated array of system paths
- * Returns a string of strings or a NULL
  */
 char **get_sys_paths()
 {
 	char **array, *dir, *cpy;
 	int num_dirs, i;
-	char *str = _getenv("PATH");
+	char *str = _getenv("PATH"); /* No memory allocations in _getenv() */
 
 	if (str == NULL)
 		return (NULL);
@@ -87,7 +86,7 @@ char **get_sys_paths()
 	}
 	array[i] = NULL;
 	free(cpy);
-	return (array);
+	return (array); /* malloc'd */
 }
 
 /**

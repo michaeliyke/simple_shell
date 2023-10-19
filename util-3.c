@@ -19,7 +19,13 @@ int executor(exec_info *ei)
 
 	/* Handle external commands */
 	tmp = extern_handler(ei->cmd_name);
-	ei->argv[0] = tmp ? tmp : ei->argv[0]; /* Don't overwrite right away */
+	if (tmp)
+	{
+		free(ei->argv[0]); /* frees argv[0] from main.c in run() */
+		ei->argv[0] = tmp; /* tmp will be free'd in exit_or_cont */
+	}
+	/* Leak could come from below code while overwrting argv[0] */
+	/* ei->argv[0] = tmp ? tmp : ei->argv[0]; Don't overwrite right away */
 	if (tmp == NULL)
 	{
 
@@ -100,17 +106,27 @@ builtInHandler builtin_handler(char *command_name)
  * @command_name: the name of command
  *
  * Return: pointer to the full path of external program or NULL
+ * NOTE:
+ * command_name is the same as argv[0] coming from main.c in run()
+ * If it exists, command_path gets a malloc'd full path
+ * and then, the caller of extern_handler will have to free
+ * argv[0] first before overwrting it with command_path
+ * which is the full path
  */
 char *extern_handler(char *command_name)
 {
 	char *command_path;
+	/**
+	 * if exists returns true, argv[0] should be free'd first
+	 * before overwrting it in the caler
+	 */
 	int exists_s = exists(command_name, &command_path);
 
-	return (exists_s ? command_path : NULL);
+	return (exists_s ? command_path : NULL); /* malloc'd */
 }
 
 /**
- * get_toks - collects the tokens of getline
+ * get_toks - collects the tokens of getline (malloc'd)
  * @s: the string
  *
  * Return: array of string tokens
@@ -123,7 +139,7 @@ char **get_toks(char *s)
 	if (s == NULL || *s == '\0')
 		return (NULL);
 	argv = malloc(sizeof(char *) * (wc + 1));
-	temp = strdup(s);
+	temp = strdup(s); /* Avoid messing with original string */
 	buff = _strtok(temp, " &|\n");
 	for (; buff; n++)
 	{

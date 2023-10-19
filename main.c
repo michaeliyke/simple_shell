@@ -54,37 +54,32 @@ int main(int ac, char **av, char **env)
  */
 int run_bool(char **av, char **env, exec_info *ei, char *ptr, int lc)
 {
-	char **toks, *cmd, *cmds = strdup(ptr);
+	char **toks, *cmd, *cmds = strdup(ptr); /* preserves original *ptr */
 	int status_code = INT_MAX, status;
 
 	(void)av;
 	(void)env;
 	(void)lc;
 	while (1)
-	{						  /* Tobe free'd: cmds, toks */
-		cmd = trim(get_next_boundary(ei, &cmds)); /* ptr shifted up */
+	{ /* Tobe free'd: cmds, toks */
+		/* ptr shifted up */
+		cmd = trim(get_next_boundary(ei, &cmds));
 		if (!cmd)
-		{
 			break;
-		}
 		toks = get_toks(cmd); /* free with free_str_arr */
 		ei->cmd_name = toks[0];
 		ei->argv = toks;
 		ei->argc = word_count(cmd);
+
 		if (status_code == INT_MAX)
-		{
 			status_code = executor(ei);
-		}
 		else if (status_code != 0 && bool_is(ei, "||"))
-		{
 			status_code = executor(ei);
-		}
 		else if (status_code == 0 && bool_is(ei, "&&"))
-		{
 			status_code = executor(ei);
-		}
 		status = status_code;
 	}
+	free(cmds); /* toks to be free'd in exit_or_cont() */
 	return (status);
 }
 
@@ -116,21 +111,22 @@ void run(char **av, char **env, exec_info *ei, char *ptr, int loopcnt)
 		if (strcmp(toks[0], n->name) == 0)
 			ei->cmd_name = n->value;
 	}
-	ei->argv = toks;	/* Our command's argv */
-	ei->shell_argv = av;	/* Argv passed to main func */
-	ei->argc = word_cnt;	/* Our command's argc */
-	ei->env = env;		/* The env passed to main func*/
-	ei->loopcnt = loopcnt;	/* Loop count in main func */
+	ei->argv = toks;       /* Our command's argv */
+	ei->shell_argv = av;   /* Argv passed to main func */
+	ei->argc = word_cnt;   /* Our command's argc */
+	ei->env = env;	       /* The env passed to main func*/
+	ei->loopcnt = loopcnt; /* Loop count in main func */
 	if (check_has_bool(ptr))
 	{ /* Above checks if command has boolean operators */
 		exit_s = check_unexpected(ptr, ei);
-		if (exit_s == 0) /* unexpected syntax was not found */
+		free_str_arr(toks); /* Free current call to get_toks() */
+		if (exit_s == 0)    /* unexpected syntax was not found */
 			exit_s = run_bool(av, env, ei, ptr, loopcnt);
 		/* else unexpected syntax was found, go straight to warning */
 	}
 	else
 		exit_s = executor(ei); /* Normal simple execution */
 
+	/* toks var s cleaned up within exit_or_cont() */
 	exit_or_cont(exit_s, ei); /* Using status code to quit/not */
-	free_str_arr(toks);	  /* Cleanup the memory used by tok */
 }
