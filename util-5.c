@@ -104,7 +104,8 @@ int word_count(char *str)
 		return (0);
 	while (*str)
 	{
-		if (isspace(*str)) /* if space, set in_word, and skip over */
+		/* if space, set in_word, and skip over */
+		if (isspace(*str) || str_contains(*str, "&|"))
 			in_word = 0;
 		else /* if not space */
 		{    /** if we are in word, skip until we find a space

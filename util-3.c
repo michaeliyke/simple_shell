@@ -124,12 +124,12 @@ char **get_toks(char *s)
 		return (NULL);
 	argv = malloc(sizeof(char *) * (wc + 1));
 	temp = strdup(s);
-	buff = _strtok(temp, " \n");
+	buff = _strtok(temp, " &|\n");
 	for (; buff; n++)
 	{
 
 		argv[n] = strdup(buff);
-		buff = _strtok(NULL, " \n");
+		buff = _strtok(NULL, " &|\n");
 	}
 	argv[n] = NULL;
 	free(temp);

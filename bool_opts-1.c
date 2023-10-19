@@ -84,14 +84,14 @@ char *get_next_boundary(exec_info *ei, char **cmd)
 	set_curr_bool(*cmd, ei); /* setup ei to correctly reflect active bool*/
 	ptr = *cmd;
 	/* skip leading spaces and bool chars */
-	while (*ptr != '\0' && (isspace(*ptr) || *ptr == '|' || *ptr == '&'))
+	while (*ptr != '\0' && (isspace(*ptr) || str_contains(*ptr, "|&")))
 		ptr++;
 	if (*ptr == '\0')
 		return ((void *)NULL); /* empty str */
 
 	/* Mark the boundary of string to return */
 	out = ptr;
-	while (*ptr != '\0' && !isspace(*ptr))
+	while (*ptr != '\0' && !str_contains(*ptr, "&|"))
 		ptr++;
 	len = ptr - out;
 	mem = malloc(sizeof(char) * (len + 1));
