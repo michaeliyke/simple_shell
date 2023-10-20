@@ -125,6 +125,6 @@ char *get_next_bool(char *line, int *bool_pos);
 
 alias_t *add_node(alias_t **head, const char *n, const char *v);
 int print_list(const alias_t *h);
-void free_alias(alias_t *head);
+void free_list(alias_t *head);
 void new_node(exec_info *ei, char *arg, char *val);
 #endif

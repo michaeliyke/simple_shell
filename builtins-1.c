@@ -35,7 +35,10 @@ int cd_fn(exec_info *ei)
 	}
 
 	if (path == NULL)
+	{
+		free(cwd);
 		return (0);
+	}
 	status = chdir(path);
 	if (status == 0)
 	{
@@ -46,6 +49,7 @@ int cd_fn(exec_info *ei)
 	{
 		dprintf(2, "./hsh: 1: cd: can't cd to %s\n", ei->argv[1]);
 	}
+	free(cwd);
 	return (0);
 }
 

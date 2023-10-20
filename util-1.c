@@ -28,7 +28,8 @@ int _setenv(const char *var_name, const char *value, int overwrite)
 			if (overwrite == 1)
 			{
 				free(name_eq); /* free(*ptr);*/
-				*ptr = var;    /* if overwrite is set, effect it*/
+				strcpy(*ptr, var);	/* if overwrite is set, effect it*/
+				free(var);
 				return (0);
 			} /* If overwrite is not set just return success */
 			free(name_eq), free(var);
