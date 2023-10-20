@@ -54,18 +54,15 @@ int main(int ac, char **av, char **env)
  */
 int run_bool(char **av, char **env, exec_info *ei, char *ptr, int lc)
 {
-	char **toks, *cmd, *cmds = strdup(ptr); /* preserves original *ptr */
+	char **toks, *cmds = strdup(ptr); /* preserves original *ptr */
 	int status_code = INT_MAX, status;
+	char *cmd = trim(get_next_boundary(ei, &cmds));
 
 	(void)av;
 	(void)env;
 	(void)lc;
-	while (1)
-	{ /* Tobe free'd: cmds, toks */
-		/* ptr shifted up */
-		cmd = trim(get_next_boundary(ei, &cmds));
-		if (!cmd)
-			break;
+	while (cmd)
+	{			      /* Tobe free'd: cmds, toks */
 		toks = get_toks(cmd); /* free with free_str_arr */
 		ei->cmd_name = toks[0];
 		ei->argv = toks;
@@ -78,6 +75,12 @@ int run_bool(char **av, char **env, exec_info *ei, char *ptr, int lc)
 		else if (status_code == 0 && bool_is(ei, "&&"))
 			status_code = executor(ei);
 		status = status_code;
+
+		free(cmd);
+		cmd = trim(get_next_boundary(ei, &cmds));
+		/* Below ensures that the mems being created are free'd */
+		if (cmd)
+			free(toks);
 	}
 	free(cmds); /* toks to be free'd in exit_or_cont() */
 	return (status);
