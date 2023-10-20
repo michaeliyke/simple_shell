@@ -38,11 +38,11 @@ int main(int ac, char **av, char **env)
 		if (lines == NULL)
 			free(user_input);
 		info.queued = lc; /* How many commands in queue */
+		info.LINES = lines, info.USER_INPUT = user_input;
 		for (x = 0; lines[x] != NULL; x++)
 		{ /* lines[x] reps each user command assuming multiple */
 			run(av, env, &info, lines[x], loopcnt);
 		}
-		free_str_arr(lines); /* user_input was free'd in get_line */
 	}
 	if (ac == 2)
 		fclose(f);
@@ -63,13 +63,13 @@ int main(int ac, char **av, char **env)
  */
 int run_bool(char **av, char **env, exec_info *ei, char *ptr, int lc)
 {
-	char **toks, *cmds = strdup(ptr); /* preserves original *ptr */
+	char **toks, *cmds = strdup(ptr), *cmds_ = cmds; /* preserves *ptr */
 	int status_code = INT_MAX, status;
 	char *cmd = trim(get_next_boundary(ei, &cmds));
 
+	(void)lc;
 	(void)av;
 	(void)env;
-	(void)lc;
 	while (cmd)
 	{			      /* Tobe free'd: cmds, toks */
 		toks = get_toks(cmd); /* free with free_str_arr */
@@ -91,7 +91,7 @@ int run_bool(char **av, char **env, exec_info *ei, char *ptr, int lc)
 		if (cmd)
 			free(toks);
 	}
-	free(cmds); /* toks to be free'd in exit_or_cont() */
+	free(cmds_); /* toks to be free'd in exit_or_cont() */
 	return (status);
 }
 

@@ -71,14 +71,17 @@ int exit_or_cont(int exit_code, exec_info *ei)
 			"%s: %d: Syntax error: \"%s\" unexpected\n",
 			ei->shell_argv[0], ei->loopcnt, ei->cmd_name);
 		free_str_arr(ei->argv); /* Free toks var of main.c */
+		free_str_arr(ei->LINES), free(ei->USER_INPUT);
 		exit(EXIT_ILLEGAL_NUM);
 		break;
 	case EXIT_NOT_FOUND:
 		free_str_arr(ei->argv); /* Free toks var of main.c */
+		free_str_arr(ei->LINES), free(ei->USER_INPUT);
 		exit(EXIT_NOT_FOUND);
 		break;
 	case EXIT_ILLEGAL_NUM:
 		free_str_arr(ei->argv); /* Free toks var of main.c */
+		free_str_arr(ei->LINES), free(ei->USER_INPUT);
 		exit(EXIT_ILLEGAL_NUM);
 		break;
 	case EXIT_IMMEDIATE:
@@ -88,10 +91,12 @@ int exit_or_cont(int exit_code, exec_info *ei)
 		 * (last_exit_code == INT_MAX ? 0 : last_exit_code)
 		 */
 		free_str_arr(ei->argv); /* Free toks var of main.c */
+		free_str_arr(ei->LINES), free(ei->USER_INPUT);
 		exit((ei->last_exit_code == INT_MAX ? 0 : ei->last_exit_code));
 		break;
 	}
-	free_str_arr(ei->argv);		/* Free toks var of main.c */
+	free_str_arr(ei->argv); /* Free toks var of main.c */
+	/* free_str_arr(ei->LINES), free(ei->USER_INPUT); */
 	ei->last_exit_code = exit_code; /* save the exit code for future use */
 	return (ei->last_exit_code);
 }

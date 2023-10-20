@@ -59,6 +59,9 @@ typedef struct exec_info
 	char *curr_bool;    /* Current command's boolean token */
 	char *bool_opt;	    /* (Deprecated) The actual bool opt in effect */
 	alias_t *al_list;   /* list of aliases */
+
+	char *USER_INPUT; /* Original user input from get_line */
+	char **LINES;	  /* The lines of command separated by ; - from main() */
 } exec_info;
 
 typedef int (*builtInHandler)(exec_info *info);
