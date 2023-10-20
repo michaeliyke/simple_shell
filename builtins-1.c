@@ -41,10 +41,7 @@ int cd_fn(exec_info *ei)
 	}
 	status = chdir(path);
 	if (status == 0)
-	{
-		_setenv("OLDPWD", cwd, 1);
-		_setenv("PWD", path, 1);
-	}
+		_setenv("OLDPWD", cwd, 1), _setenv("PWD", path, 1);
 	else
 	{
 		dprintf(2, "./hsh: 1: cd: can't cd to %s\n", ei->argv[1]);
