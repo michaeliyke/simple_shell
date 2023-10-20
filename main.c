@@ -44,6 +44,8 @@ int main(int ac, char **av, char **env)
 		}
 		free_str_arr(lines); /* user_input was free'd in get_line */
 	}
+	if (ac == 2)
+		fclose(f);
 	free_list(info.al_list);
 	return (0);
 }
