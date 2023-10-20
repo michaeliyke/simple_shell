@@ -125,3 +125,17 @@ int print_list(const alias_t *h)
 		print_list(h->next);
 	return (0);
 }
+/**
+ * free_list - frees a list_t list
+ * @head: pointer to atrt of a list
+ */
+void free_list(alias_t *head)
+{
+	if (head != NULL)
+	{
+		free_list(head->next);
+		free(head->value);
+		free(head->name);
+		free(head);
+	}
+}
