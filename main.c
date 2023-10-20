@@ -21,6 +21,7 @@ int main(int ac, char **av, char **env)
 
 	info.last_exit_code = INT_MAX; /* Default value for first run */
 	info.al_list = al_list;
+
 	while (++loopcnt)
 	{
 		if (f == NULL)
@@ -43,6 +44,7 @@ int main(int ac, char **av, char **env)
 		}
 		free_str_arr(lines); /* user_input was free'd in get_line */
 	}
+	free_list(info.al_list);
 	return (0);
 }
 
