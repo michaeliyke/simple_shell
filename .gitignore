@@ -36,7 +36,6 @@ chk
 *.dSYM/
 
 # Ignore editor/IDE specific files and settings
-.vscode/
 .idea/
 *.sublime-project
 *.sublime-workspace
